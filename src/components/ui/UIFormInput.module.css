@@ -5,14 +5,28 @@
   min-height: 2rem;
 }
 
+.inputLabel {
+  position: relative;
+  width: 8rem;
+}
+
 .uiInput {
   margin-top: 0.5rem;
   height: 3rem;
   border: 0.1rem solid var(--third-color);
   text-transform: capitalize;
-  padding: 0px 1.8rem;
+  padding: 0 1.8rem;
+  margin-bottom: 0.5rem;
   color: #555;
   font-size: 14px;
   font-weight: 400;
   border-radius: 0.4rem;
+}
+
+.pasImgWrapper {
+  display: none;
+  position: absolute;
+  cursor: pointer;
+  top: 0.5rem;
+  right: 0;
 }

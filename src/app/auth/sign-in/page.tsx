@@ -1,6 +1,7 @@
 'use client';
 
 import { useForm, SubmitHandler } from 'react-hook-form';
+import Link from 'next/link';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { signInValidationSchema } from '@/utils/validationSchemes';
 import { UIFormInput } from '@/components/ui/UIInput';
@@ -51,6 +52,9 @@ export default function SignUpPage() {
           Sign in
         </button>
       </form>
+      <p>
+        Dont have an account? <Link href="/auth/sign-up">Register</Link>
+      </p>
     </div>
   );
 }
