@@ -1,10 +1,14 @@
 'use client';
 
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { signInValidationSchema } from '@/utils/validationSchemes';
 import { UIFormInput } from '@/components/ui/UIInput';
+import { auth, logInWithEmailAndPassword } from '@/utils/firebase';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { useEffect } from 'react';
 
 export type SignInFormType = {
   email: string;
@@ -21,11 +25,26 @@ export default function SignUpPage() {
     mode: 'onChange',
   });
 
+  const [user, loading] = useAuthState(auth);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (loading) {
+      return;
+    }
+    if (user) router.push('/');
+    console.log(user);
+  }, [user, loading]);
+
+  const onError = () => {
+    console.log('error with logIn');
+  };
+
   const logInUser: SubmitHandler<SignInFormType> = ({
     email,
     password,
   }): void => {
-    console.log(email, password);
+    logInWithEmailAndPassword(email, password).catch(onError);
   };
   return (
     <div>

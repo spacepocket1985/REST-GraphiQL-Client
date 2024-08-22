@@ -1,10 +1,14 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { UIFormInput } from '@/components/ui/UIInput';
 import { signUpValidationSchema } from '@/utils/validationSchemes';
+import { auth, registerWithEmailAndPassword } from '@/utils/firebase';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { useEffect } from 'react';
 
 type SignUpFormType = {
   name: string;
@@ -23,16 +27,27 @@ export default function SignUpPage() {
     mode: 'onChange',
   });
 
+  const [user, loading] = useAuthState(auth);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (loading) return;
+    if (user) router.push('/auth/sign-in');
+  }, [user, loading]);
+
+  const onError = () => {
+    // toast.error(state.strings.signUpPageFirebaseError, {
+    //   position: toast.POSITION.TOP_LEFT,
+    // });
+    console.log('error register');
+  };
+
   const registerUser: SubmitHandler<SignUpFormType> = ({
     name,
     email,
     password,
   }) => {
-    console.log({
-      name,
-      email,
-      password,
-    });
+    registerWithEmailAndPassword(name, email, password).catch(onError);
   };
 
   return (
