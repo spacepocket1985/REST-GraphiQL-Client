@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -74,7 +74,7 @@ export default function SignUpPage() {
           }
           required
         />
-          <button type="submit" disabled={!isValid}>
+        <button type="submit" disabled={!isValid}>
           Sign up
         </button>
       </form>

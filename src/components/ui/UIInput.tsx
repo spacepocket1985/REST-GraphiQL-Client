@@ -2,7 +2,6 @@ import { FieldValues, Path, UseFormRegister } from 'react-hook-form';
 import styles from './UIFormInput.module.css';
 
 type UiFormInputProps<T extends FieldValues> = {
-
   type?: React.HTMLInputTypeAttribute;
   name: Path<T>;
   register: UseFormRegister<T>;
