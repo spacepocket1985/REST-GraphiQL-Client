@@ -6,13 +6,13 @@
 }
 
 .uiInput {
-  margin-top: .5rem;
+  margin-top: 0.5rem;
   height: 3rem;
-  border: .1rem solid var(--third-color);
+  border: 0.1rem solid var(--third-color);
   text-transform: capitalize;
   padding: 0px 1.8rem;
   color: #555;
   font-size: 14px;
   font-weight: 400;
-  border-radius: .4rem;
+  border-radius: 0.4rem;
 }

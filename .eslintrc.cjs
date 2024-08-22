@@ -47,6 +47,6 @@ module.exports = {
     '@typescript-eslint/no-empty-function': 'off',
 
     'react-refresh/only-export-components': 'off',
-    'no-console': 'warn',
+    // 'no-console': 'warn',
   },
 };
