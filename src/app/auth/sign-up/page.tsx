@@ -35,7 +35,7 @@ export default function SignUpPage() {
 
   useEffect(() => {
     if (loading) return;
-    if (user) router.push('/auth/sign-in');
+    if (user) router.push(RoutePaths.WELCOME);
   }, [user, loading]);
 
   const registerUser: SubmitHandler<SignUpFormType> = async ({
@@ -46,6 +46,7 @@ export default function SignUpPage() {
     setIsLoading(true);
     try {
       await registerWithEmailAndPassword(name, email, password);
+      router.push(RoutePaths.SIGNIN);
     } catch (error) {
       if (error instanceof Error) onError(error);
     } finally {
