@@ -29,7 +29,7 @@ export default function WelcomePage() {
   const router = useRouter();
   return (
     <>
-      <h2>Welcome {name}</h2>
+      <h2>{user ? `Welcome Back, ${name}!` : 'Welcome!'}</h2>
       <div className={styles.welcomeWrapper}>
         <UIButton text="Sign In" href="/auth/sign-in" />
         <UIButton text="Sign Up" href="/auth/sign-up" />

@@ -6,13 +6,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { UIFormInput } from '@/components/ui/UIInput';
 import { signUpValidationSchema } from '@/utils/validationSchemes';
-import {
-  auth,
-  registerWithEmailAndPassword,
-  isLoading,
-} from '@/utils/firebase';
+import { auth, registerWithEmailAndPassword, onError } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { RoutePaths } from '@/constants/routePaths';
 import { Spinner } from '@/components/spinner/Spinner';
 
@@ -24,6 +20,7 @@ type SignUpFormType = {
 };
 
 export default function SignUpPage() {
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -41,19 +38,19 @@ export default function SignUpPage() {
     if (user) router.push('/auth/sign-in');
   }, [user, loading]);
 
-  const onError = () => {
-    // toast.error(state.strings.signUpPageFirebaseError, {
-    //   position: toast.POSITION.TOP_LEFT,
-    // });
-    console.log('error register');
-  };
-
-  const registerUser: SubmitHandler<SignUpFormType> = ({
+  const registerUser: SubmitHandler<SignUpFormType> = async ({
     name,
     email,
     password,
   }) => {
-    registerWithEmailAndPassword(name, email, password).catch(onError);
+    setIsLoading(true);
+    try {
+      await registerWithEmailAndPassword(name, email, password);
+    } catch (error) {
+      if (error instanceof Error) onError(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

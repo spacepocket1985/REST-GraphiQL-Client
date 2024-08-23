@@ -2,12 +2,12 @@
 
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { signInValidationSchema } from '@/utils/validationSchemes';
 import { UIFormInput } from '@/components/ui/UIInput';
-import { auth, logInWithEmailAndPassword, isLoading } from '@/utils/firebase';
+import { auth, logInWithEmailAndPassword, onError } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { RoutePaths } from '@/constants/routePaths';
 import { Spinner } from '@/components/spinner/Spinner';
@@ -18,6 +18,7 @@ export type SignInFormType = {
 };
 
 export default function SignUpPage() {
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -37,15 +38,18 @@ export default function SignUpPage() {
     if (user) router.push(RoutePaths.WELCOME);
   }, [user, loading]);
 
-  const onError = () => {
-    console.log('error with logIn');
-  };
-
-  const logInUser: SubmitHandler<SignInFormType> = ({
+  const logInUser: SubmitHandler<SignInFormType> = async ({
     email,
     password,
-  }): void => {
-    logInWithEmailAndPassword(email, password).catch(onError);
+  }) => {
+    setIsLoading(true);
+    try {
+      await logInWithEmailAndPassword(email, password);
+    } catch (error) {
+      if (error instanceof Error) onError(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

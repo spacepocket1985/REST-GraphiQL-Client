@@ -16,6 +16,7 @@ import {
   query,
   DocumentData,
 } from 'firebase/firestore';
+import { toast } from 'react-toastify';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBMboYU_6CoJR4clhix5BrV83gVQm-P2rk',
@@ -29,16 +30,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-let isLoading = false;
 
 const logInWithEmailAndPassword = async (email: string, password: string) => {
   try {
-    isLoading = true;
     await signInWithEmailAndPassword(auth, email, password);
-    isLoading = false;
   } catch (err) {
-    isLoading = false;
-    if (err instanceof Error) throw new Error(err.message);
+    if (err instanceof Error) {
+      throw new Error(err.message);
+    }
   }
 };
 const registerWithEmailAndPassword = async (
@@ -47,7 +46,6 @@ const registerWithEmailAndPassword = async (
   password: string
 ) => {
   try {
-    isLoading = true;
     const res = await createUserWithEmailAndPassword(auth, email, password);
     const { user } = res;
     await addDoc(collection(db, 'users'), {
@@ -56,9 +54,7 @@ const registerWithEmailAndPassword = async (
       authProvider: 'local',
       email,
     });
-    isLoading = false;
   } catch (err) {
-    isLoading = false;
     if (err instanceof Error) throw new Error(err.message);
   }
 };
@@ -86,6 +82,19 @@ const fetchUserName = async (
   }
 };
 
+const onError = (error: Error): void => {
+  toast.error(error.message, {
+    position: 'top-right',
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: 'light',
+  });
+};
+
 export {
   auth,
   db,
@@ -94,5 +103,5 @@ export {
   logout,
   useUser,
   fetchUserName,
-  isLoading,
+  onError,
 };
