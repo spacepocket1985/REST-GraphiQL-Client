@@ -52,6 +52,7 @@ button {
   transform: perspective(1px) translateZ(0);
   border: none;
   border-radius: 0.4rem;
+  cursor: pointer;
 }
 button:hover {
   color: #fff;
@@ -70,7 +71,7 @@ button:before {
   transform-origin: 50%;
 
   transition: all 0.4s ease;
-  border-radius: 4px;
+  border-radius: 0.4rem;
 }
 button:hover:before {
   transform: scaleX(1);

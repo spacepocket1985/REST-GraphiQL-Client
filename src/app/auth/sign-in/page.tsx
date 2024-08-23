@@ -9,6 +9,7 @@ import { UIFormInput } from '@/components/ui/UIInput';
 import { auth, logInWithEmailAndPassword } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useEffect } from 'react';
+import { RoutePaths } from '@/constants/routePaths';
 
 export type SignInFormType = {
   email: string;
@@ -32,8 +33,7 @@ export default function SignUpPage() {
     if (loading) {
       return;
     }
-    if (user) router.push('/');
-    console.log(user);
+    if (user) router.push(RoutePaths.WELCOME);
   }, [user, loading]);
 
   const onError = () => {
@@ -72,7 +72,7 @@ export default function SignUpPage() {
         </button>
       </form>
       <p>
-        Dont have an account? <Link href="/auth/sign-up">Register</Link>
+        Dont have an account? <Link href={RoutePaths.SIGNUP}>Register</Link>
       </p>
     </div>
   );

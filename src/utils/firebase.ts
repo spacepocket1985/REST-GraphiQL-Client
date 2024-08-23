@@ -4,9 +4,18 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
+  User,
 } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  where,
+  query,
+  DocumentData,
+} from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyBMboYU_6CoJR4clhix5BrV83gVQm-P2rk',
@@ -56,6 +65,20 @@ const useUser = () => {
   return user;
 };
 
+const fetchUserName = async (
+  user: User
+): Promise<DocumentData[string] | undefined> => {
+  try {
+    const q = query(collection(db, 'users'), where('uid', '==', user?.uid));
+    const doc = await getDocs(q);
+    const data = doc.docs[0].data();
+    return data.name;
+  } catch (err) {
+    console.error(err);
+    alert('An error occured while fetching user data');
+  }
+};
+
 export {
   auth,
   db,
@@ -63,4 +86,5 @@ export {
   registerWithEmailAndPassword,
   logout,
   useUser,
+  fetchUserName,
 };

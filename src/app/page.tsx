@@ -1,32 +1,29 @@
 'use client';
 
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { useRouter } from 'next/navigation';
-import { auth, db } from '@/utils/firebase';
-import { query, collection, getDocs, where } from 'firebase/firestore';
-import UIButton from '@/components/ui/UIButton';
-import styles from './page.module.css';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { auth, fetchUserName } from '@/utils/firebase';
+import UIButton from '@/components/ui/UIButton';
+
+import styles from './page.module.css';
 
 export default function WelcomePage() {
   const [user, loading] = useAuthState(auth);
   const [name, setName] = useState('');
 
-  const fetchUserName = async () => {
-    try {
-      const q = query(collection(db, 'users'), where('uid', '==', user?.uid));
-      const doc = await getDocs(q);
-      const data = doc.docs[0].data();
-      setName(data.name);
-    } catch (err) {
-      console.error(err);
-      alert('An error occured while fetching user data');
-    }
-  };
   useEffect(() => {
-    if (loading) return;
-    if (!user) return router.push('/');
-    fetchUserName();
+    const fetchData = async () => {
+      if (loading) return;
+      if (!user) {
+        setName('');
+        return router.push('/');
+      }
+      const userName = await fetchUserName(user);
+      setName(userName);
+    };
+
+    fetchData();
   }, [user, loading]);
 
   const router = useRouter();

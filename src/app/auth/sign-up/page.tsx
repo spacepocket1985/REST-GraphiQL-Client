@@ -9,6 +9,7 @@ import { signUpValidationSchema } from '@/utils/validationSchemes';
 import { auth, registerWithEmailAndPassword } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useEffect } from 'react';
+import { RoutePaths } from '@/constants/routePaths';
 
 type SignUpFormType = {
   name: string;
@@ -95,7 +96,7 @@ export default function SignUpPage() {
         </button>
       </form>
       <p>
-        Already have an account? <Link href="/auth/sign-up">Sign in</Link>
+        Already have an account? <Link href={RoutePaths.SIGNIN}>Sign in</Link>
       </p>
     </>
   );
