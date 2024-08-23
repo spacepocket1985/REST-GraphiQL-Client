@@ -6,10 +6,15 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { UIFormInput } from '@/components/ui/UIInput';
 import { signUpValidationSchema } from '@/utils/validationSchemes';
-import { auth, registerWithEmailAndPassword } from '@/utils/firebase';
+import {
+  auth,
+  registerWithEmailAndPassword,
+  isLoading,
+} from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useEffect } from 'react';
 import { RoutePaths } from '@/constants/routePaths';
+import { Spinner } from '@/components/spinner/Spinner';
 
 type SignUpFormType = {
   name: string;
@@ -54,50 +59,57 @@ export default function SignUpPage() {
   return (
     <>
       <h2>Sign Up</h2>
-      <form onSubmit={handleSubmit(registerUser)}>
-        <UIFormInput
-          type="text"
-          name="name"
-          register={register}
-          placeholder="name"
-          error={errors.name?.message ? errors.name.message : null}
-          required
-        />
-        <UIFormInput
-          type="text"
-          name="email"
-          register={register}
-          placeholder="email"
-          error={errors.email?.message ? errors.email.message : null}
-          required
-        />
-        <UIFormInput
-          type="password"
-          name="password"
-          register={register}
-          placeholder="password"
-          error={errors.password?.message ? errors.password.message : null}
-          required
-        />
-        <UIFormInput
-          type="password"
-          name="confirmPassword"
-          register={register}
-          placeholder="confirm password"
-          error={
-            errors.confirmPassword?.message
-              ? errors.confirmPassword.message
-              : null
-          }
-          required
-        />
-        <button type="submit" disabled={!isValid}>
-          Sign up
-        </button>
-      </form>
-      <p>
-        Already have an account? <Link href={RoutePaths.SIGNIN}>Sign in</Link>
-      </p>
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <>
+          <form onSubmit={handleSubmit(registerUser)}>
+            <UIFormInput
+              type="text"
+              name="name"
+              register={register}
+              placeholder="name"
+              error={errors.name?.message ? errors.name.message : null}
+              required
+            />
+            <UIFormInput
+              type="text"
+              name="email"
+              register={register}
+              placeholder="email"
+              error={errors.email?.message ? errors.email.message : null}
+              required
+            />
+            <UIFormInput
+              type="password"
+              name="password"
+              register={register}
+              placeholder="password"
+              error={errors.password?.message ? errors.password.message : null}
+              required
+            />
+            <UIFormInput
+              type="password"
+              name="confirmPassword"
+              register={register}
+              placeholder="confirm password"
+              error={
+                errors.confirmPassword?.message
+                  ? errors.confirmPassword.message
+                  : null
+              }
+              required
+            />
+            <button type="submit" disabled={!isValid}>
+              Sign up
+            </button>
+          </form>
+          <p>
+            Already have an account?{' '}
+            <Link href={RoutePaths.SIGNIN}>Sign in</Link>
+          </p>
+        </>
+      )}
     </>
   );
 }

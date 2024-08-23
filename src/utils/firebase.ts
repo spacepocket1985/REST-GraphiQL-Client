@@ -29,11 +29,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+let isLoading = false;
 
 const logInWithEmailAndPassword = async (email: string, password: string) => {
   try {
+    isLoading = true;
     await signInWithEmailAndPassword(auth, email, password);
+    isLoading = false;
   } catch (err) {
+    isLoading = false;
     if (err instanceof Error) throw new Error(err.message);
   }
 };
@@ -43,6 +47,7 @@ const registerWithEmailAndPassword = async (
   password: string
 ) => {
   try {
+    isLoading = true;
     const res = await createUserWithEmailAndPassword(auth, email, password);
     const { user } = res;
     await addDoc(collection(db, 'users'), {
@@ -51,7 +56,9 @@ const registerWithEmailAndPassword = async (
       authProvider: 'local',
       email,
     });
+    isLoading = false;
   } catch (err) {
+    isLoading = false;
     if (err instanceof Error) throw new Error(err.message);
   }
 };
@@ -87,4 +94,5 @@ export {
   logout,
   useUser,
   fetchUserName,
+  isLoading,
 };
