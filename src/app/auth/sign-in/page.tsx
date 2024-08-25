@@ -17,8 +17,8 @@ export type SignInFormType = {
   password: string;
 };
 
-export default function SignUpPage() {
-  const [isLoading, setIsLoading] = useState(false);
+export default function SignInPage() {
+  const [isLoading, setIsLoading] = useState(true);
   const {
     register,
     handleSubmit,
@@ -35,6 +35,7 @@ export default function SignUpPage() {
     if (loading) {
       return;
     }
+    if (!user) setIsLoading(false);
     if (user) router.push(RoutePaths.WELCOME);
   }, [user, loading]);
 
@@ -54,11 +55,11 @@ export default function SignUpPage() {
 
   return (
     <div>
-      <h2>Sign In</h2>
-      {isLoading ? (
+      {user || isLoading ? (
         <Spinner />
       ) : (
         <>
+          <h2>Sign In</h2>
           <form onSubmit={handleSubmit(logInUser)}>
             <UIFormInput
               type="text"

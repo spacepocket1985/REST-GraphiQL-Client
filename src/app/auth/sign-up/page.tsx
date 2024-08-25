@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -11,6 +10,8 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { useEffect, useState } from 'react';
 import { RoutePaths } from '@/constants/routePaths';
 import { Spinner } from '@/components/spinner/Spinner';
+import Link from 'next/link';
+import { UIButton } from '@/components/ui/UIButton';
 
 type SignUpFormType = {
   name: string;
@@ -20,7 +21,7 @@ type SignUpFormType = {
 };
 
 export default function SignUpPage() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const {
     register,
     handleSubmit,
@@ -35,6 +36,7 @@ export default function SignUpPage() {
 
   useEffect(() => {
     if (loading) return;
+    if (!user) setIsLoading(false);
     if (user) router.push(RoutePaths.WELCOME);
   }, [user, loading]);
 
@@ -56,11 +58,11 @@ export default function SignUpPage() {
 
   return (
     <>
-      <h2>Sign Up</h2>
-      {isLoading ? (
+      {isLoading || user ? (
         <Spinner />
       ) : (
         <>
+          <h2>Sign Up</h2>
           <form onSubmit={handleSubmit(registerUser)}>
             <UIFormInput
               type="text"
@@ -98,13 +100,11 @@ export default function SignUpPage() {
               }
               required
             />
-            <button type="submit" disabled={!isValid}>
-              Sign up
-            </button>
+            <UIButton type="submit" disabled={!isValid} text="Sign up" />
           </form>
           <p>
-            Already have an account?{' '}
-            <Link href={RoutePaths.SIGNIN}>Sign in</Link>
+            Already have an account?
+            <Link href={RoutePaths.SIGNIN}> Sign in</Link>
           </p>
         </>
       )}

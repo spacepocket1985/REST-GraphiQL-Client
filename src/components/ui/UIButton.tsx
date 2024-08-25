@@ -1,31 +1,20 @@
-import Link from 'next/link';
-import { CSSProperties } from 'react';
+import classNames from 'classnames';
+import styles from './UI.module.css';
+import { ButtonHTMLAttributes, FC } from 'react';
 
-type UIButtonProps = {
+interface UIButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   text?: string;
-  style?: CSSProperties;
-  href?: string;
-  onClick?: () => void;
-  type?: 'button' | 'submit' | 'reset';
-  disabled?: boolean;
-};
+}
 
-const UIButton = (props: UIButtonProps) => {
-  const {
-    text,
-    href = '',
-    style,
-    onClick,
-    type = 'button',
-    disabled = false,
-  } = props;
+export const UIButton: FC<UIButtonProps> = ({
+  children,
+  className,
+  ...props
+}) => {
   return (
-    <Link href={href} passHref>
-      <button style={style} onClick={onClick} type={type} disabled={disabled}>
-        {text}
-      </button>
-    </Link>
+    <button className={classNames(styles.uIlinkorButton, className)} {...props}>
+      {props.text}
+      {children}
+    </button>
   );
 };
-
-export default UIButton;
