@@ -1,0 +1,19 @@
+.RESTWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 60rem;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem 0;
+  gap: 1rem;
+}
+
+.RESTTools {
+  display: flex;
+  gap: 1rem;
+}
+
+.RESTSubTitle {
+  margin-bottom: 1rem;
+}
