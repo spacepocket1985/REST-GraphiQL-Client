@@ -7,6 +7,7 @@ import { auth, fetchUserName } from '@/utils/firebase';
 
 import styles from './page.module.css';
 import UIButton from '@/components/ui/UIButton';
+import { RoutePaths } from '@/constants/routePaths';
 
 export default function WelcomePage() {
   const [user, loading] = useAuthState(auth);
@@ -38,7 +39,7 @@ export default function WelcomePage() {
                 Available utilities and features
               </h3>
               <div className={styles.welcomeTools}>
-                <UIButton text="REST Client" href="" />
+                <UIButton text="REST Client" href={RoutePaths.RESTFULL} />
                 <UIButton text="GraphiQL Client" href="" />
                 <UIButton text="History" href="" />
               </div>
