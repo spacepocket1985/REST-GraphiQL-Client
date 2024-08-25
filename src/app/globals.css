@@ -15,13 +15,22 @@ html {
   text-align: center;
 }
 
+html,
+body {
+  height: 100%;
+}
+
 body {
   display: flex;
   flex-direction: column;
+  font-size: 1.4rem;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  justify-self: center;
   align-items: center;
-  margin-top: 2rem;
-  overflow-x: hidden;
-  font-size: 1.3rem;
 }
 
 a {
@@ -29,16 +38,13 @@ a {
 }
 
 header {
-  background-color: rgba(165, 186, 200, 0.3);
+  background-color: rgba(165, 186, 200, 0.6);
   margin-bottom: 1rem;
   width: 100vw;
 }
 
 footer {
-  position: relative;
-  bottom: 0;
-  left: 0;
-  width: 100vw;
+  margin-top: auto;
   background-color: rgba(165, 186, 200, 0.3);
   text-align: center;
   padding: 20px;
