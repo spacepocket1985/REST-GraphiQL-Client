@@ -48,7 +48,6 @@ export default function SignUpPage() {
     setIsLoading(true);
     try {
       await registerWithEmailAndPassword(name, email, password);
-      router.push(RoutePaths.SIGNIN);
     } catch (error) {
       if (error instanceof Error) onError(error);
     } finally {

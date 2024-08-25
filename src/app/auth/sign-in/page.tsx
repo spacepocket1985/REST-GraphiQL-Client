@@ -11,6 +11,7 @@ import { auth, logInWithEmailAndPassword, onError } from '@/utils/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { RoutePaths } from '@/constants/routePaths';
 import { Spinner } from '@/components/spinner/Spinner';
+import { UIButton } from '@/components/ui/UIButton';
 
 export type SignInFormType = {
   email: string;
@@ -77,9 +78,7 @@ export default function SignInPage() {
               error={errors.password?.message ? errors.password.message : null}
               required
             />
-            <button type="submit" disabled={!isValid}>
-              Sign in
-            </button>
+            <UIButton type="submit" disabled={!isValid} text="Sign in" />
           </form>
           <p>
             Dont have an account? <Link href={RoutePaths.SIGNUP}>Register</Link>
