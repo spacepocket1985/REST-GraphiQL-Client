@@ -14,6 +14,16 @@
   gap: 1rem;
 }
 
-.wrapperSubTitle {
+.welcomeSectionTitle {
   margin-bottom: 1rem;
+}
+
+.welcomeSectionInfo {
+  text-align: justify;
+  padding-bottom: 1rem;
+}
+
+.welcomeList {
+  text-align: justify;
+  margin: 1rem 0;
 }
