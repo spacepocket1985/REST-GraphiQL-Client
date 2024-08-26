@@ -27,3 +27,9 @@
   font-family: monospace;
   resize: none;
 }
+
+.bodytextarea{
+  width: 300px;
+  height: 150px;
+
+}
