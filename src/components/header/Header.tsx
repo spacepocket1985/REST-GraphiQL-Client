@@ -1,16 +1,15 @@
 'use client';
 
-import { useAuthState } from 'react-firebase-hooks/auth';
-
 import { useEffect, useState } from 'react';
-import { auth, logout } from '@/utils/firebase';
+import { logout } from '@/utils/firebase';
 import { RoutePaths } from '@/constants/routePaths';
 import { UIButton } from '../ui/UIButton';
 import styles from './Header.module.css';
 import { UILink } from '../ui/UILink';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Header() {
-  const [user] = useAuthState(auth);
+  const { user, isLoading } = useAuth();
   const [isScroll, setIsScroll] = useState(false);
 
   const handleScroll = () => {
@@ -39,7 +38,11 @@ export default function Header() {
           <UIButton text="Language Toggle" />
           {user ? (
             <>
-              <UIButton text="Sign Out" onClick={logout} />
+              <UIButton
+                text="Sign Out"
+                onClick={logout}
+                disabled={!!isLoading}
+              />
             </>
           ) : (
             <>

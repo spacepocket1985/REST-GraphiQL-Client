@@ -7,6 +7,7 @@ import Header from '@/components/header/Header';
 
 import 'react-toastify/dist/ReactToastify.css';
 import './globals.css';
+import { Providers } from './providers';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -23,10 +24,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ToastContainer />
-        <Header />
-        <main>{children}</main>
-        <Footer />
+        <Providers>
+          <ToastContainer />
+          <Header />
+          <main>{children}</main>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );
