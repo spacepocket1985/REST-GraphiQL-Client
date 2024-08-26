@@ -8,7 +8,7 @@ import { auth, fetchUserName } from '@/utils/firebase';
 import styles from './page.module.css';
 
 type ResponseState = {
-  statusCode: number | null;
+  statusCode: number | string;
   body: string;
 };
 
@@ -36,7 +36,7 @@ export default function RESTfullPage() {
   const [requestBody, setRequestBody] = useState('{}');
   const [headers, setHeaders] = useState<{ [key: string]: string }>({});
   const [response, setResponse] = useState<ResponseState>({
-    statusCode: null,
+    statusCode: '',
     body: '{}',
   });
 
@@ -58,7 +58,6 @@ export default function RESTfullPage() {
 
   const handleHeaderChange = (key: string, value: string) => {
     const updatedHeaders = { ...headers, [key]: value };
-    console.log('update headers', updatedHeaders);
 
     setHeaders(updatedHeaders);
     // updateRoute(method, endpoint, requestBody, updatedHeaders);
@@ -93,7 +92,7 @@ export default function RESTfullPage() {
           ...headers,
         },
         body:
-          method !== 'GET'
+          method !== 'GET' && method !== 'DELETE'
             ? JSON.stringify(JSON.parse(requestBody))
             : undefined,
       });
@@ -109,7 +108,7 @@ export default function RESTfullPage() {
       const message =
         error instanceof Error ? error.message : 'An unknown error occurred';
       setResponse({
-        statusCode: -1,
+        statusCode: 'error',
         body: message,
       });
     }
@@ -131,7 +130,9 @@ export default function RESTfullPage() {
                 >
                   <option value="GET">GET</option>
                   <option value="POST">POST</option>
-                  {/* Add other methods as needed */}
+                  <option value="PUT">PUT</option>
+                  <option value="PATCH">PATCH</option>
+                  <option value="DELETE">DELETE</option>
                 </select>
               </div>
               <div>
@@ -186,8 +187,9 @@ export default function RESTfullPage() {
                 <label>Body:</label>
                 <textarea
                   value={requestBody}
+                  className={`${styles.RESTTextarea} ${styles.bodytextarea}`}
                   onChange={(e) => handleRequestBodyChange(e.target.value)}
-                  disabled={method === 'GET'}
+                  disabled={method === 'GET' || method === 'DELETE'}
                 />
               </div>
 
