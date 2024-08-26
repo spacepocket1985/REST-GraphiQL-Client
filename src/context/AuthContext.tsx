@@ -14,6 +14,12 @@ type AuthContextProps = {
   isLoading: boolean;
 };
 
+const privateRoutes = [
+  RoutePaths.GRAPHIQL,
+  RoutePaths.RESTFULL,
+  RoutePaths.HISTORY,
+];
+
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -29,6 +35,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const fetchData = async () => {
       if (loading) return;
       if (!user) {
+        if (privateRoutes.includes(pathname as RoutePaths))
+          router.push(RoutePaths.WELCOME);
         setName(null);
         setIsLoading(false);
         return;
@@ -47,7 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     };
 
     fetchData();
-  }, [user, loading, router]);
+  }, [user, loading, router, pathname]);
 
   return (
     <AuthContext.Provider value={{ user, loading, isLoading, name }}>
