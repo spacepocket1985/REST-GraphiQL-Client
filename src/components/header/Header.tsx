@@ -1,14 +1,15 @@
 'use client';
 
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { useEffect, useState } from 'react';
-import { auth, logout } from '@/utils/firebase';
+import { logout } from '@/utils/firebase';
 import { RoutePaths } from '@/constants/routePaths';
-import UIButton from '../ui/UIButton';
+import { UIButton } from '../ui/UIButton';
 import styles from './Header.module.css';
+import { UILink } from '../ui/UILink';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Header() {
-  const [user] = useAuthState(auth);
+  const { user, isLoading } = useAuth();
   const [isScroll, setIsScroll] = useState(false);
 
   const handleScroll = () => {
@@ -26,29 +27,30 @@ export default function Header() {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
   return (
     <header
       className={`${styles['stickyHeader']} ${isScroll ? `${styles['opacity-70']} ${styles['transition-all']}` : ''}`}
     >
       <div className={styles.headerWrapper}>
-        <UIButton text="Logo" href="" />
+        <UIButton text="Logo" />
         <div className={styles.menuWrapper}>
-          <UIButton text="Language Toggle" href="" />
+          <UIButton text="Language Toggle" />
           {user ? (
             <>
               <UIButton
                 text="Sign Out"
-                href={RoutePaths.WELCOME}
                 onClick={logout}
+                disabled={!!isLoading}
               />
             </>
           ) : (
             <>
-              <UIButton text="Sign In" href={RoutePaths.SIGNIN} />
-              <UIButton text="Sign Up" href={RoutePaths.SIGNUP} />
+              <UILink text="Sign In" href={RoutePaths.SIGNIN} />
+              <UILink text="Sign Up" href={RoutePaths.SIGNUP} />
             </>
           )}
-          <UIButton text="Welcome" href={RoutePaths.WELCOME} />
+          <UILink text="Welcome" href={RoutePaths.WELCOME} />
         </div>
       </div>
     </header>

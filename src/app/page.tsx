@@ -1,32 +1,15 @@
 'use client';
 
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { auth, fetchUserName } from '@/utils/firebase';
-
 import styles from './page.module.css';
-import UIButton from '@/components/ui/UIButton';
+import { UILink } from '@/components/ui/UILink';
+
+import { useAuth } from '@/context/AuthContext';
+import { Spinner } from '@/components/spinner/Spinner';
 
 export default function WelcomePage() {
-  const [user, loading] = useAuthState(auth);
-  const [name, setName] = useState<null | string>(null);
+  const { user, name, isLoading } = useAuth();
+  if (isLoading) return <Spinner />;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (loading) return;
-      if (!user) {
-        setName(null);
-        return router.push('/');
-      }
-      const userName = await fetchUserName(user);
-      setName(userName);
-    };
-
-    fetchData();
-  }, [user, loading]);
-
-  const router = useRouter();
   return (
     <>
       <div className={styles.welcomeWrapper}>
@@ -38,9 +21,9 @@ export default function WelcomePage() {
                 Available utilities and features
               </h3>
               <div className={styles.welcomeTools}>
-                <UIButton text="REST Client" href="" />
-                <UIButton text="GraphiQL Client" href="" />
-                <UIButton text="History" href="" />
+                <UILink text="REST Client" href="" />
+                <UILink text="GraphiQL Client" href="" />
+                <UILink text="History" href="" />
               </div>
             </div>
           </>
