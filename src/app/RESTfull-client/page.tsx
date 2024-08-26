@@ -42,27 +42,33 @@ export default function RESTfullPage() {
 
   const handleMethodChange = (selectedMethod: string) => {
     setMethod(selectedMethod);
-    // updateRoute(selectedMethod, endpoint, requestBody, headers);
   };
 
   const handleEndpointChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const url = event.target.value;
     setEndpoint(url);
-    // updateRoute(method, url, requestBody, headers);
   };
 
   const handleRequestBodyChange = (body: string) => {
     setRequestBody(body);
-    // updateRoute(method, endpoint, body, headers);
   };
 
   const handleHeaderChange = (key: string, value: string) => {
     const updatedHeaders = { ...headers, [key]: value };
 
     setHeaders(updatedHeaders);
-    // updateRoute(method, endpoint, requestBody, updatedHeaders);
   };
-  /* 
+
+  const updateUrlWindow = (newUrl: string) => {
+    if (typeof window !== 'undefined') {
+      window.history.replaceState(
+        { ...window.history.state, as: newUrl, url: newUrl },
+        '',
+        newUrl
+      );
+    }
+  };
+
   const updateRoute = (
     method: string,
     endpoint: string,
@@ -78,11 +84,12 @@ export default function RESTfullPage() {
       ])
     ).toString();
 
-    router.push(
-      `/${method}/${encodedUrl}${body ? `/${encodedBody}` : ''}?${queryParams}`
-    );
+    const href = `/RESTfull-client/${method}/${encodedUrl}${body ? `/${encodedBody}` : ''}?${queryParams}`;
+
+    // router.replace(href, { shallow: true });
+    updateUrlWindow(href);
   };
- */
+
   const sendRequest = async () => {
     try {
       const response = await fetch(endpoint, {
@@ -104,6 +111,8 @@ export default function RESTfullPage() {
           ? JSON.stringify(JSON.parse(responseBody), null, 2)
           : '',
       });
+      // update url only visualy
+      updateRoute(method, endpoint, requestBody, headers);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : 'An unknown error occurred';
