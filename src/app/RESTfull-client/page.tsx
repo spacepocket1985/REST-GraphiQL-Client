@@ -59,6 +59,28 @@ export default function RESTfullPage() {
     setHeaders(updatedHeaders);
   };
 
+  const addToLocalStorage = (
+    method: string,
+    endpoint: string,
+    body: string,
+    headers: { [key: string]: string }
+  ) => {
+    const existingEntries = JSON.parse(
+      localStorage.getItem('rest-data') || '[]'
+    );
+
+    const currentData = {
+      method,
+      endpoint,
+      body,
+      headers,
+    };
+
+    const updatedEntries = [...existingEntries, currentData];
+
+    localStorage.setItem('rest-data', JSON.stringify(updatedEntries));
+  };
+
   const updateUrlWindow = (newUrl: string) => {
     if (typeof window !== 'undefined') {
       window.history.replaceState(
@@ -112,6 +134,7 @@ export default function RESTfullPage() {
           : '',
       });
       // update url only visualy
+      addToLocalStorage(method, endpoint, requestBody, headers);
       updateRoute(method, endpoint, requestBody, headers);
     } catch (error) {
       const message =
