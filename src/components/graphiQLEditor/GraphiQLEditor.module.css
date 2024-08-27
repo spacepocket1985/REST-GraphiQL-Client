@@ -12,3 +12,33 @@
 .btnDel {
   padding: 0.5rem 1rem;
 }
+
+.editorInput {
+  width: 100%;
+}
+
+.headerLine {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerLine h3 {
+  width: 74%;
+}
+
+.sectionTitle {
+  margin-bottom: 0.5rem;
+  padding: 0.8rem;
+  background-color: var(--third-color);
+  border: 0.1rem solid var(--third-color);
+  border-radius: 0.4rem;
+  color: white;
+  cursor: pointer;
+}
+
+.myCodeMirror {
+  background-color: var(--third-color);
+  border: 0.2rem solid var(--third-color);
+  border-radius: 0.4rem;
+}
