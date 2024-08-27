@@ -1,0 +1,14 @@
+.editorWrapper {
+  width: 50rem;
+}
+
+.headerWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btnDel {
+  padding: 0.5rem 1rem;
+}

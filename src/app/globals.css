@@ -48,3 +48,15 @@ footer {
   text-align: center;
   padding: 20px;
 }
+
+input {
+  margin-top: 0.5rem;
+  height: 3rem;
+  border: 0.1rem solid var(--third-color);
+  padding: 0 1.8rem;
+  margin-bottom: 0.5rem;
+  color: #555;
+  font-size: 14px;
+  font-weight: 400;
+  border-radius: 0.4rem;
+}

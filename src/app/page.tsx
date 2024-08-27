@@ -5,6 +5,7 @@ import { UILink } from '@/components/ui/UILink';
 
 import { useAuth } from '@/context/AuthContext';
 import { Spinner } from '@/components/spinner/Spinner';
+import { RoutePaths } from '@/constants/routePaths';
 
 export default function WelcomePage() {
   const { user, name, isLoading } = useAuth();
@@ -22,7 +23,7 @@ export default function WelcomePage() {
               </h3>
               <div className={styles.welcomeTools}>
                 <UILink text="REST Client" href="" />
-                <UILink text="GraphiQL Client" href="" />
+                <UILink text="GraphiQL Client" href={RoutePaths.GRAPHIQL} />
                 <UILink text="History" href="" />
               </div>
             </div>
