@@ -71,16 +71,14 @@ const GraphiQLPage: React.FC<Props> = () => {
       const jsonResponse = await res.json();
       setResponse(jsonResponse);
       if (res.ok) {
-        const docRes = await fetch(sdlUrl, { method: 'GET' });
-
-        if (docRes.ok) {
-          const documentation = await docRes.json();
-          setSdlDocs(documentation);
-        } else {
-          setSdlDocs(null);
-        }
-      } else {
-        setSdlDocs(null);
+        fetchGraphQLSchema()
+          .then((schema) => {
+            setSdlDocs(schema);
+          })
+          .catch((error) => {
+            console.error('Error fetching schema:', error);
+            setSdlDocs(null);
+          });
       }
     } catch (error) {
       if (error instanceof Error) setResponse({ error: error.message });
@@ -101,6 +99,41 @@ const GraphiQLPage: React.FC<Props> = () => {
     }
     return true;
   };
+
+  async function fetchGraphQLSchema() {
+    const query = `
+      {
+        __schema {
+          types {
+            name
+            kind
+            fields {
+              name
+              type {
+                name
+                kind
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    const response = await fetch(sdlUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok ' + response.statusText);
+    }
+
+    const { data } = await response.json();
+    return data;
+  }
 
   const handlePrettify = () => {
     try {
