@@ -10,6 +10,11 @@ import { UIButton } from '../ui/UIButton';
 
 import { onError } from '@/utils/firebase';
 import styles from './GraphiQLEditor.module.css';
+import {
+  graphBaseQuery,
+  graphBaseURL,
+  shemaQuery,
+} from '@/constants/graphiQLData';
 
 export interface Props {
   endpoint: string;
@@ -17,18 +22,9 @@ export interface Props {
 }
 
 const GraphiQLPage: React.FC<Props> = () => {
-  const [endpoint, setEndpoint] = useState<string>(
-    'https://rickandmortyapi.com/graphql'
-  );
+  const [endpoint, setEndpoint] = useState<string>(graphBaseURL);
   const [sdlUrl, setSdlUrl] = useState<string>(`${endpoint}?sdl`);
-  const [query, setQuery] = useState<string>(`query ($filter: FilterCharacter) {
-    characters(filter: $filter) {
-      results {
-        name
-      }
-    }
-  }
-  `);
+  const [query, setQuery] = useState<string>(graphBaseQuery);
 
   const [variables, setVariables] = useState<string>('');
   const [headers, setHeaders] = useState<{ key: string; value: string }[]>([
@@ -101,30 +97,12 @@ const GraphiQLPage: React.FC<Props> = () => {
   };
 
   async function fetchGraphQLSchema() {
-    const query = `
-      {
-        __schema {
-          types {
-            name
-            kind
-            fields {
-              name
-              type {
-                name
-                kind
-              }
-            }
-          }
-        }
-      }
-    `;
-
     const response = await fetch(sdlUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ query }),
+      body: JSON.stringify({ shemaQuery }),
     });
 
     if (!response.ok) {
