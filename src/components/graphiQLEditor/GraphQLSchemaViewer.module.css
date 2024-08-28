@@ -1,0 +1,41 @@
+.schemaContainer {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+.schemaContainer ul {
+  list-style-type: none;
+  padding-left: 20px;
+}
+
+.schemaContainer li {
+  text-align: start;
+  margin: 5px 0;
+}
+
+.fields {
+  margin-left: 10px;
+  padding-left: 10px;
+  border-left: 1px solid #ccc;
+}
+.kindWrapper {
+  margin-bottom: 1.5rem;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-start;
+  align-items: center;
+}
+.kind,
+.kindName {
+  padding: 0.5rem;
+  text-align: start;
+  background-color: var(--fourth-color);
+  border: 0.1rem solid var(--fourth-color);
+  border-radius: 0.4rem;
+  color: white;
+}
+
+.kindName {
+  background-color: var(--third-color);
+  border: 0.1rem solid var(--third-color);
+}

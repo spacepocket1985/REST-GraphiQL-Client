@@ -71,6 +71,10 @@
   transition: all 0.3s;
 }
 
+.response {
+  text-align: start;
+}
+
 .response span {
   padding-right: 1rem;
   word-break: normal;

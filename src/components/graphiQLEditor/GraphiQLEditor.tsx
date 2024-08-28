@@ -1,20 +1,18 @@
 'use client';
 
-import { jsonTreeTheme } from '@/constants/jsonTreeTheme';
+import { JsonView, allExpanded, defaultStyles } from 'react-json-view-lite';
+import 'react-json-view-lite/dist/index.css';
 import gqlPrettier from 'graphql-prettier';
 import CodeMirror, { EditorView } from '@uiw/react-codemirror';
 import React, { useState } from 'react';
 
-import { JSONTree, KeyPath } from 'react-json-tree';
 import { UIButton } from '../ui/UIButton';
 
 import { onError } from '@/utils/firebase';
 import styles from './GraphiQLEditor.module.css';
-import {
-  graphBaseQuery,
-  graphBaseURL,
-  shemaQuery,
-} from '@/constants/graphiQLData';
+import { graphBaseQuery, graphBaseURL } from '@/constants/graphiQLData';
+import { fetchGraphQLSchema, GraphQLType } from '@/utils/fetchGraphQLSchema';
+import GraphQLSchemaViewer from './GraphQLSchemaViewer';
 
 export interface Props {
   endpoint: string;
@@ -33,7 +31,7 @@ const GraphiQLPage: React.FC<Props> = () => {
   const [response, setResponse] = useState<Record<string, unknown> | null>(
     null
   );
-  const [sdlDocs, setSdlDocs] = useState<Record<string, unknown> | null>(null);
+  const [sdlDocs, setSdlDocs] = useState<GraphQLType[] | null>(null);
   const [statusCode, setStatusCode] = useState<number | null>(null);
 
   const [isQueryVisible, setIsQueryVisible] = useState(true);
@@ -66,15 +64,15 @@ const GraphiQLPage: React.FC<Props> = () => {
       setStatusCode(res.status);
       const jsonResponse = await res.json();
       setResponse(jsonResponse);
+      console.log(jsonResponse);
       if (res.ok) {
-        fetchGraphQLSchema()
-          .then((schema) => {
-            setSdlDocs(schema);
-          })
-          .catch((error) => {
-            console.error('Error fetching schema:', error);
-            setSdlDocs(null);
-          });
+        try {
+          const schema = await fetchGraphQLSchema(sdlUrl);
+          setSdlDocs(schema);
+        } catch (error) {
+          console.error('Error:', error);
+          setSdlDocs(null);
+        }
       }
     } catch (error) {
       if (error instanceof Error) setResponse({ error: error.message });
@@ -85,33 +83,6 @@ const GraphiQLPage: React.FC<Props> = () => {
   const handleDelHeader = (index: number) => {
     setHeaders(headers.filter((_, itemIndex) => itemIndex !== index));
   };
-  const shouldExpandNodeInitially = (
-    keyPath: KeyPath,
-    data: unknown,
-    level: number
-  ): boolean => {
-    if (data) {
-      console.log(Number(keyPath) + level);
-    }
-    return true;
-  };
-
-  async function fetchGraphQLSchema() {
-    const response = await fetch(sdlUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ shemaQuery }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Network response was not ok ' + response.statusText);
-    }
-
-    const { data } = await response.json();
-    return data;
-  }
 
   const handlePrettify = () => {
     try {
@@ -278,10 +249,10 @@ const GraphiQLPage: React.FC<Props> = () => {
 
         <div className={styles.response}>
           {response && (
-            <JSONTree
+            <JsonView
               data={response}
-              theme={jsonTreeTheme}
-              shouldExpandNodeInitially={shouldExpandNodeInitially}
+              shouldExpandNode={allExpanded}
+              style={defaultStyles}
             />
           )}
         </div>
@@ -289,13 +260,7 @@ const GraphiQLPage: React.FC<Props> = () => {
       <section>
         <h3 className={styles.sectionTitle}>SDL Docs:</h3>
         <div className={styles.response}>
-          {sdlDocs && (
-            <JSONTree
-              data={sdlDocs}
-              theme={jsonTreeTheme}
-              shouldExpandNodeInitially={shouldExpandNodeInitially}
-            />
-          )}
+          {sdlDocs && <GraphQLSchemaViewer types={sdlDocs} />}
         </div>
       </section>
     </div>
