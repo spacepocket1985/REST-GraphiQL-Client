@@ -2,7 +2,7 @@
 
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { auth, fetchUserName } from '@/utils/firebase';
 
 import styles from './page.module.css';
@@ -21,14 +21,6 @@ export default function RESTfullPage({
     bodyBase64Encoded: string;
   };
 }) {
-  console.log(params);
-
-  const initParamsDecoded = {
-    method: params.method,
-    endpoint: atob(decodeURIComponent(params.urlBase64Encoded)),
-    body: atob(decodeURIComponent(params.bodyBase64Encoded)),
-  };
-
   const [user, loading] = useAuthState(auth);
   const [, setName] = useState<null | string>(null);
 
@@ -47,14 +39,57 @@ export default function RESTfullPage({
   }, [user, loading]);
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  //init decoded headers from URL
+  const initHeaders = new Map<string, string>();
+  searchParams.forEach((value, key) => {
+    const decodedValue = decodeURIComponent(value);
+    initHeaders.set(key, decodedValue);
+  });
+
+  //init decoded params from URL
+  let initParamsDecoded: {
+    method: string;
+    endpoint: string;
+    body: string;
+  };
+  try {
+    const decodedEndpoint = atob(decodeURIComponent(params.urlBase64Encoded));
+    const decodedBody = atob(decodeURIComponent(params.bodyBase64Encoded));
+
+    initParamsDecoded = {
+      method: params.method,
+      endpoint: decodedEndpoint,
+      body: decodedBody,
+    };
+  } catch (error) {
+    console.error('Error decoded base64 data:', error);
+    initParamsDecoded = {
+      method: params.method,
+      endpoint: ' ',
+      body: ' ',
+    };
+  }
+
   const [method, setMethod] = useState(initParamsDecoded.method);
   const [endpoint, setEndpoint] = useState(initParamsDecoded.endpoint);
   const [requestBody, setRequestBody] = useState(initParamsDecoded.body);
-  const [headers, setHeaders] = useState<{ [key: string]: string }>({});
+
+  const [headers, setHeaders] = useState(initHeaders);
   const [response, setResponse] = useState<ResponseState>({
     statusCode: '',
     body: '{}',
   });
+
+  useEffect(() => {
+    updateRoute(
+      method,
+      endpoint || ' ',
+      requestBody || ' ',
+      Array.from(headers)
+    );
+  }, [method, endpoint, requestBody, headers]);
 
   const handleMethodChange = (selectedMethod: string) => {
     setMethod(selectedMethod);
@@ -69,17 +104,32 @@ export default function RESTfullPage({
     setRequestBody(body);
   };
 
-  const handleHeaderChange = (key: string, value: string) => {
-    const updatedHeaders = { ...headers, [key]: value };
+  const handleHeaderChange = (
+    key: string,
+    newValue: string,
+    index: number,
+    isKeyChange: boolean
+  ) => {
+    const updatedHeadersArray = Array.from(headers);
 
-    setHeaders(updatedHeaders);
+    if (isKeyChange) {
+      if (newValue.trim() !== '') {
+        updatedHeadersArray[index] = [newValue, updatedHeadersArray[index][1]];
+      } else {
+        updatedHeadersArray.splice(index, 1);
+      }
+    } else {
+      updatedHeadersArray[index] = [updatedHeadersArray[index][0], newValue];
+    }
+
+    setHeaders(new Map(updatedHeadersArray));
   };
 
   const addToLocalStorage = (
     method: string,
     endpoint: string,
     body: string,
-    headers: { [key: string]: string }
+    headers: [string, string][]
   ) => {
     const existingEntries = JSON.parse(
       localStorage.getItem('rest-data') || '[]'
@@ -89,7 +139,7 @@ export default function RESTfullPage({
       method,
       endpoint,
       body,
-      headers,
+      headers: Object.fromEntries(headers),
     };
 
     const updatedEntries = [...existingEntries, currentData];
@@ -101,15 +151,13 @@ export default function RESTfullPage({
     method: string,
     endpoint: string,
     body: string,
-    headers: { [key: string]: string }
+    headers: [string, string][]
   ) => {
     const encodedUrl = btoa(endpoint);
     const encodedBody = btoa(body);
+
     const queryParams = new URLSearchParams(
-      Object.entries(headers).map(([key, value]) => [
-        key,
-        encodeURIComponent(value),
-      ])
+      headers.map(([key, value]) => [key, encodeURIComponent(value)])
     ).toString();
 
     const href = `/RESTfull-client/${method}/${encodedUrl}${body ? `/${encodedBody}` : ''}?${queryParams}`;
@@ -123,7 +171,7 @@ export default function RESTfullPage({
         method: method,
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
-          ...headers,
+          ...Object.fromEntries(headers),
         },
         body:
           method !== 'GET' && method !== 'DELETE'
@@ -138,9 +186,8 @@ export default function RESTfullPage({
           ? JSON.stringify(JSON.parse(responseBody), null, 2)
           : '',
       });
-      // update url only visualy
-      addToLocalStorage(method, endpoint, requestBody, headers);
-      updateRoute(method, endpoint, requestBody, headers);
+      addToLocalStorage(method, endpoint, requestBody, Array.from(headers));
+      updateRoute(method, endpoint, requestBody, Array.from(headers));
     } catch (error) {
       const message =
         error instanceof Error ? error.message : 'An unknown error occurred';
@@ -182,39 +229,38 @@ export default function RESTfullPage({
               </div>
               {/* Headers editor */}
               <div>
-                {Object.entries(headers).map(([key, value], index) => (
+                {Array.from(headers).map(([key, value], index) => (
                   <div key={index}>
                     <input
                       type="text"
                       placeholder="Header Key"
                       value={key}
                       onChange={(e) => {
-                        const newHeaders = { ...headers };
-                        delete newHeaders[key]; // Remove old key
-                        setHeaders({
-                          ...newHeaders,
-                          [e.target.value]: value,
-                        }); // Add new key
+                        handleHeaderChange(key, e.target.value, index, true);
                       }}
                     />
                     <input
                       type="text"
                       placeholder="Header Value"
                       value={value}
-                      onChange={(e) => handleHeaderChange(key, e.target.value)}
+                      onChange={(e) =>
+                        handleHeaderChange(key, e.target.value, index, false)
+                      }
                     />
                     <button
                       onClick={() => {
-                        const newHeaders = { ...headers };
-                        delete newHeaders[key];
-                        setHeaders(newHeaders);
+                        const updatedPairs = new Map(headers);
+                        updatedPairs.delete(key);
+                        setHeaders(updatedPairs);
                       }}
                     >
                       Remove
                     </button>
                   </div>
                 ))}
-                <button onClick={() => setHeaders({ ...headers, '': '' })}>
+                <button
+                  onClick={() => setHeaders(new Map(headers).set('', ''))}
+                >
                   Add Header
                 </button>
               </div>
@@ -240,8 +286,6 @@ export default function RESTfullPage({
                 value={response.body}
               />
             </section>
-
-            <p>REST</p>
           </div>
         </>
       </div>
