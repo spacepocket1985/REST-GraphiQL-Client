@@ -42,6 +42,8 @@
     "eslint-plugin-react-compiler": "^0.0.0-experimental-8e3b87c-20240819",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.10",
+    "format-graphql": "^1.5.0",
+    "graphql-prettier": "^1.0.6",
     "husky": "^9.1.5",
     "typescript": "^5"
   },

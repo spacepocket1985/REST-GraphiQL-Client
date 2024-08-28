@@ -1,11 +1,14 @@
 'use client';
 
+import { jsonTreeTheme } from '@/constants/jsonTreeTheme';
+import gqlPrettier from 'graphql-prettier';
 import CodeMirror, { EditorView } from '@uiw/react-codemirror';
 import React, { useState } from 'react';
 
-import { JSONTree } from 'react-json-tree';
+import { JSONTree, KeyPath } from 'react-json-tree';
 import { UIButton } from '../ui/UIButton';
 
+import { onError } from '@/utils/firebase';
 import styles from './GraphiQLEditor.module.css';
 
 export interface Props {
@@ -15,10 +18,18 @@ export interface Props {
 
 const GraphiQLPage: React.FC<Props> = () => {
   const [endpoint, setEndpoint] = useState<string>(
-    'https://countries.trevorblades.com/'
+    'https://rickandmortyapi.com/graphql'
   );
-  const [sdlUrl, setSdlUrl] = useState<string>('');
-  const [query, setQuery] = useState<string>('');
+  const [sdlUrl, setSdlUrl] = useState<string>(`${endpoint}?sdl`);
+  const [query, setQuery] = useState<string>(`query ($filter: FilterCharacter) {
+    characters(filter: $filter) {
+      results {
+        name
+      }
+    }
+  }
+  `);
+
   const [variables, setVariables] = useState<string>('');
   const [headers, setHeaders] = useState<{ key: string; value: string }[]>([
     { key: '', value: '' },
@@ -26,6 +37,7 @@ const GraphiQLPage: React.FC<Props> = () => {
   const [response, setResponse] = useState<Record<string, unknown> | null>(
     null
   );
+  const [sdlDocs, setSdlDocs] = useState<Record<string, unknown> | null>(null);
   const [statusCode, setStatusCode] = useState<number | null>(null);
 
   const [isQueryVisible, setIsQueryVisible] = useState(true);
@@ -34,27 +46,6 @@ const GraphiQLPage: React.FC<Props> = () => {
 
   const addHeader = () => {
     setHeaders([...headers, { key: '', value: '' }]);
-  };
-
-  const theme = {
-    scheme: 'monokai',
-    author: 'w0ng',
-    base00: '#272822',
-    base01: '#383830',
-    base02: '#49483e',
-    base03: '#75715e',
-    base04: '#f8f8f2',
-    base05: '#f8f8f2',
-    base06: '#f8f8f2',
-    base07: '#f8f8f2',
-    base08: '#f92672',
-    base09: '#fd971f',
-    base0A: '#f4bf75',
-    base0B: '#a6e22e',
-    base0C: '#a1efe4',
-    base0D: '#66d9ef',
-    base0E: '#ae81ff',
-    base0F: '#cc6633',
   };
 
   const handleRequest = async () => {
@@ -79,8 +70,19 @@ const GraphiQLPage: React.FC<Props> = () => {
       setStatusCode(res.status);
       const jsonResponse = await res.json();
       setResponse(jsonResponse);
+      if (res.ok) {
+        const docRes = await fetch(sdlUrl, { method: 'GET' });
+
+        if (docRes.ok) {
+          const documentation = await docRes.json();
+          setSdlDocs(documentation);
+        } else {
+          setSdlDocs(null);
+        }
+      } else {
+        setSdlDocs(null);
+      }
     } catch (error) {
-      console.error('Error during fetch:', error);
       if (error instanceof Error) setResponse({ error: error.message });
       setStatusCode(null);
     }
@@ -89,11 +91,31 @@ const GraphiQLPage: React.FC<Props> = () => {
   const handleDelHeader = (index: number) => {
     setHeaders(headers.filter((_, itemIndex) => itemIndex !== index));
   };
+  const shouldExpandNodeInitially = (
+    keyPath: KeyPath,
+    data: unknown,
+    level: number
+  ): boolean => {
+    if (data) {
+      console.log(Number(keyPath) + level);
+    }
+    return true;
+  };
+
+  const handlePrettify = () => {
+    try {
+      const prettifiedQuery = gqlPrettier(query);
+
+      setQuery(prettifiedQuery);
+    } catch (error) {
+      if (error instanceof Error) onError(error);
+    }
+  };
 
   return (
     <div className={styles.editorWrapper}>
       <section>
-        <div>
+        <div className={styles.urlLine}>
           <input
             type="text"
             value={endpoint}
@@ -101,8 +123,9 @@ const GraphiQLPage: React.FC<Props> = () => {
             placeholder="Endpoint URL"
             className={styles.editorInput}
           />
+          <p className={styles.url}>URL</p>
         </div>
-        <div>
+        <div className={styles.urlLine}>
           <input
             type="text"
             value={sdlUrl}
@@ -110,10 +133,11 @@ const GraphiQLPage: React.FC<Props> = () => {
             placeholder="SDL URL"
             className={styles.editorInput}
           />
+          <p className={styles.url}>SDL</p>
         </div>
       </section>
       <section>
-        <div className={styles.headerLine}>
+        <div className={styles.titleLine}>
           <h3
             onClick={() => setIsHeadersVisible(!isHeadersVisible)}
             className={styles.sectionTitle}
@@ -162,12 +186,15 @@ const GraphiQLPage: React.FC<Props> = () => {
       </section>
 
       <section>
-        <h3
-          onClick={() => setIsQueryVisible(!isQueryVisible)}
-          className={styles.sectionTitle}
-        >
-          Query {isQueryVisible ? '[show]' : '[hide]'}
-        </h3>
+        <div className={styles.titleLine}>
+          <h3
+            onClick={() => setIsQueryVisible(!isQueryVisible)}
+            className={styles.sectionTitle}
+          >
+            Query {isQueryVisible ? '[show]' : '[hide]'}
+          </h3>
+          <UIButton onClick={handlePrettify}>Prettify </UIButton>
+        </div>
         {isQueryVisible && (
           <CodeMirror
             className={styles.myCodeMirror}
@@ -231,11 +258,34 @@ const GraphiQLPage: React.FC<Props> = () => {
           />
         )}
       </section>
-      <UIButton onClick={handleRequest}>Send</UIButton>
+      <UIButton onClick={handleRequest}>Send request</UIButton>
       <section>
-        <h3 className={styles.sectionTitle}>Response:</h3>
-        <p>Status: {statusCode}</p>
-        {response && <JSONTree data={response} theme={theme} />}
+        <div className={styles.titleLine}>
+          <h3 className={styles.sectionTitle}>Response:</h3>
+          <p className={styles.status}>Status: {statusCode}</p>
+        </div>
+
+        <div className={styles.response}>
+          {response && (
+            <JSONTree
+              data={response}
+              theme={jsonTreeTheme}
+              shouldExpandNodeInitially={shouldExpandNodeInitially}
+            />
+          )}
+        </div>
+      </section>
+      <section>
+        <h3 className={styles.sectionTitle}>SDL Docs:</h3>
+        <div className={styles.response}>
+          {sdlDocs && (
+            <JSONTree
+              data={sdlDocs}
+              theme={jsonTreeTheme}
+              shouldExpandNodeInitially={shouldExpandNodeInitially}
+            />
+          )}
+        </div>
       </section>
     </div>
   );
