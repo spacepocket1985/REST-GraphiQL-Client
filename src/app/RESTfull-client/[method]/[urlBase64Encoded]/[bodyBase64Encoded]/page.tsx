@@ -12,7 +12,23 @@ type ResponseState = {
   body: string;
 };
 
-export default function RESTfullPage() {
+export default function RESTfullPage({
+  params,
+}: {
+  params: {
+    method: string;
+    urlBase64Encoded: string;
+    bodyBase64Encoded: string;
+  };
+}) {
+  console.log(params);
+
+  const initParamsDecoded = {
+    method: params.method,
+    endpoint: atob(decodeURIComponent(params.urlBase64Encoded)),
+    body: atob(decodeURIComponent(params.bodyBase64Encoded)),
+  };
+
   const [user, loading] = useAuthState(auth);
   const [, setName] = useState<null | string>(null);
 
@@ -31,9 +47,9 @@ export default function RESTfullPage() {
   }, [user, loading]);
 
   const router = useRouter();
-  const [method, setMethod] = useState('GET');
-  const [endpoint, setEndpoint] = useState('');
-  const [requestBody, setRequestBody] = useState('{}');
+  const [method, setMethod] = useState(initParamsDecoded.method);
+  const [endpoint, setEndpoint] = useState(initParamsDecoded.endpoint);
+  const [requestBody, setRequestBody] = useState(initParamsDecoded.body);
   const [headers, setHeaders] = useState<{ [key: string]: string }>({});
   const [response, setResponse] = useState<ResponseState>({
     statusCode: '',
@@ -81,16 +97,6 @@ export default function RESTfullPage() {
     localStorage.setItem('rest-data', JSON.stringify(updatedEntries));
   };
 
-  const updateUrlWindow = (newUrl: string) => {
-    if (typeof window !== 'undefined') {
-      window.history.replaceState(
-        { ...window.history.state, as: newUrl, url: newUrl },
-        '',
-        newUrl
-      );
-    }
-  };
-
   const updateRoute = (
     method: string,
     endpoint: string,
@@ -108,8 +114,7 @@ export default function RESTfullPage() {
 
     const href = `/RESTfull-client/${method}/${encodedUrl}${body ? `/${encodedBody}` : ''}?${queryParams}`;
 
-    // router.replace(href, { shallow: true });
-    updateUrlWindow(href);
+    router.replace(href, undefined);
   };
 
   const sendRequest = async () => {
@@ -155,7 +160,7 @@ export default function RESTfullPage() {
 
             <section>
               <div>
-                <label>Method:</label>
+                <label>Method: </label>
                 <select
                   onChange={(e) => handleMethodChange(e.target.value)}
                   value={method}
@@ -216,7 +221,7 @@ export default function RESTfullPage() {
 
               {/* Request Body editor */}
               <div>
-                <label>Body:</label>
+                <label>Body: </label>
                 <textarea
                   value={requestBody}
                   className={`${styles.RESTTextarea} ${styles.bodytextarea}`}
