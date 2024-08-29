@@ -4,7 +4,7 @@ import { JsonView, allExpanded, defaultStyles } from 'react-json-view-lite';
 import 'react-json-view-lite/dist/index.css';
 import gqlPrettier from 'graphql-prettier';
 import CodeMirror, { EditorView } from '@uiw/react-codemirror';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { UIButton } from '../ui/UIButton';
 
@@ -13,13 +13,19 @@ import styles from './GraphiQLEditor.module.css';
 import { graphBaseQuery, graphBaseURL } from '@/constants/graphiQLData';
 import { fetchGraphQLSchema, GraphQLType } from '@/utils/fetchGraphQLSchema';
 import GraphQLSchemaViewer from './GraphQLSchemaViewer';
+import { useRouter } from 'next/navigation';
 
 export interface Props {
-  endpoint: string;
-  body: string;
+  paramEndpoint: string;
+  paramBody: string;
+  paramHeaders: Record<string, string>;
 }
 
-const GraphiQLPage: React.FC<Props> = () => {
+const GraphiQLEditor: React.FC<Props> = ({
+  paramEndpoint,
+  paramBody,
+  paramHeaders,
+}) => {
   const [endpoint, setEndpoint] = useState<string>(graphBaseURL);
   const [sdlUrl, setSdlUrl] = useState<string>(`${endpoint}?sdl`);
   const [query, setQuery] = useState<string>(graphBaseQuery);
@@ -38,8 +44,44 @@ const GraphiQLPage: React.FC<Props> = () => {
   const [isHeadersVisible, setIsHeadersVisible] = useState(true);
   const [isVariablesVisible, setIsVariablesVisible] = useState(true);
 
+  const router = useRouter();
+
+  useEffect(() => {
+    if (paramEndpoint) {
+      setEndpoint(paramEndpoint);
+    }
+    if (paramBody) {
+      console.log(paramBody);
+      setQuery(paramBody);
+    }
+
+    const headerArray = Object.entries(paramHeaders).map(([key, value]) => ({
+      key,
+      value,
+    }));
+    setHeaders(headerArray);
+  }, [paramEndpoint, paramBody, paramHeaders]);
+
   const addHeader = () => {
     setHeaders([...headers, { key: '', value: '' }]);
+  };
+
+  const handleUrl = () => {
+    const headersObj = Object.fromEntries(
+      headers
+        .filter((header) => header.key.trim() !== '')
+        .map((header) => [header.key, header.value])
+    );
+    const endpointUrlBase64 = btoa(endpoint);
+    const bodyBase64 = btoa(
+      encodeURIComponent(JSON.stringify({ query, variables }))
+    );
+    const newUrl = `/GraphiQL-client/${endpointUrlBase64}/${bodyBase64}?${new URLSearchParams(headersObj).toString()}`;
+    console.log('endpoint ', endpoint);
+    console.log('body', { query, variables });
+    console.log('headersObj', headersObj);
+
+    router.push(newUrl);
   };
 
   const handleRequest = async () => {
@@ -241,6 +283,7 @@ const GraphiQLPage: React.FC<Props> = () => {
         )}
       </section>
       <UIButton onClick={handleRequest}>Send request</UIButton>
+      <UIButton onClick={handleUrl}>Send url</UIButton>
       <section>
         <div className={styles.titleLine}>
           <h3 className={styles.sectionTitle}>Response:</h3>
@@ -267,4 +310,4 @@ const GraphiQLPage: React.FC<Props> = () => {
   );
 };
 
-export default GraphiQLPage;
+export default GraphiQLEditor;
