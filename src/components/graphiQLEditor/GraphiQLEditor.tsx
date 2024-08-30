@@ -9,36 +9,44 @@ import React, { useEffect, useState } from 'react';
 import { UIButton } from '../ui/UIButton';
 
 import { onError } from '@/utils/firebase';
-import styles from './GraphiQLEditor.module.css';
-import { graphBaseQuery, graphBaseURL } from '@/constants/graphiQLData';
+import { graphBase } from '@/constants/graphiQLData';
 import { fetchGraphQLSchema, GraphQLType } from '@/utils/fetchGraphQLSchema';
 import GraphQLSchemaViewer from './GraphQLSchemaViewer';
 import { useRouter } from 'next/navigation';
+import { Spinner } from '../spinner/Spinner';
+import styles from './GraphiQLEditor.module.css';
 
 export interface Props {
-  paramEndpoint: string;
-  paramBody: string;
-  paramHeaders: Record<string, string>;
+  paramEndpoint?: string;
+  paramSdl?: string;
+  paramVariables?: string;
+  paramHeaders?: { key: string; value: string }[];
+  paramQuery?: string;
+  response?: Record<string, unknown> | null;
+  statusCode?: number | null;
+  isLoading?: boolean;
 }
 
 const GraphiQLEditor: React.FC<Props> = ({
   paramEndpoint,
-  paramBody,
+  paramSdl,
+  paramVariables,
   paramHeaders,
+  paramQuery,
+  statusCode,
+  response,
+  isLoading,
 }) => {
-  const [endpoint, setEndpoint] = useState<string>(graphBaseURL);
-  const [sdlUrl, setSdlUrl] = useState<string>(`${endpoint}?sdl`);
-  const [query, setQuery] = useState<string>(graphBaseQuery);
+  const [endpoint, setEndpoint] = useState<string>('');
+  const [sdlUrl, setSdlUrl] = useState<string>('');
+  const [query, setQuery] = useState<string>('');
 
   const [variables, setVariables] = useState<string>('');
-  const [headers, setHeaders] = useState<{ key: string; value: string }[]>([
-    { key: '', value: '' },
-  ]);
-  const [response, setResponse] = useState<Record<string, unknown> | null>(
-    null
+  const [headers, setHeaders] = useState<{ key: string; value: string }[]>(
+    graphBase.headers
   );
+
   const [sdlDocs, setSdlDocs] = useState<GraphQLType[] | null>(null);
-  const [statusCode, setStatusCode] = useState<number | null>(null);
 
   const [isQueryVisible, setIsQueryVisible] = useState(true);
   const [isHeadersVisible, setIsHeadersVisible] = useState(true);
@@ -49,22 +57,40 @@ const GraphiQLEditor: React.FC<Props> = ({
   useEffect(() => {
     if (paramEndpoint) {
       setEndpoint(paramEndpoint);
+      setSdlUrl(`${paramEndpoint}?sdl`);
     }
-    if (paramBody) {
-      console.log(paramBody);
-      setQuery(paramBody);
-    }
+    if (paramSdl) setSdlUrl(paramSdl);
+    if (paramQuery) setQuery(paramQuery);
+    if (paramVariables) setVariables(paramVariables);
 
-    const headerArray = Object.entries(paramHeaders).map(([key, value]) => ({
-      key,
-      value,
-    }));
-    setHeaders(headerArray);
-  }, [paramEndpoint, paramBody, paramHeaders]);
+    if (paramHeaders) {
+      const headerArray = paramHeaders.map(({ key, value }) => ({
+        key,
+        value,
+      }));
+      setHeaders(headerArray);
+    }
+  }, [paramEndpoint, paramHeaders, paramQuery, paramVariables]);
 
   const addHeader = () => {
     setHeaders([...headers, { key: '', value: '' }]);
   };
+
+  useEffect(() => {
+    const fetchSchema = async () => {
+      if (response && statusCode === 200) {
+        try {
+          const schema = await fetchGraphQLSchema(sdlUrl);
+          setSdlDocs(schema);
+        } catch (error) {
+          console.error('Error:', error);
+          setSdlDocs(null);
+        }
+      }
+    };
+
+    fetchSchema();
+  }, [response, sdlUrl]);
 
   const handleUrl = () => {
     const headersObj = Object.fromEntries(
@@ -77,49 +103,7 @@ const GraphiQLEditor: React.FC<Props> = ({
       encodeURIComponent(JSON.stringify({ query, variables }))
     );
     const newUrl = `/GraphiQL-client/${endpointUrlBase64}/${bodyBase64}?${new URLSearchParams(headersObj).toString()}`;
-    console.log('endpoint ', endpoint);
-    console.log('body', { query, variables });
-    console.log('headersObj', headersObj);
-
     router.push(newUrl);
-  };
-
-  const handleRequest = async () => {
-    const headersObj = Object.fromEntries(
-      headers
-        .filter((header) => header.key.trim() !== '')
-        .map((header) => [header.key, header.value])
-    );
-    try {
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...headersObj,
-        },
-        body: JSON.stringify({
-          query,
-          variables: JSON.parse(variables || '{}'),
-        }),
-      });
-
-      setStatusCode(res.status);
-      const jsonResponse = await res.json();
-      setResponse(jsonResponse);
-      console.log(jsonResponse);
-      if (res.ok) {
-        try {
-          const schema = await fetchGraphQLSchema(sdlUrl);
-          setSdlDocs(schema);
-        } catch (error) {
-          console.error('Error:', error);
-          setSdlDocs(null);
-        }
-      }
-    } catch (error) {
-      if (error instanceof Error) setResponse({ error: error.message });
-      setStatusCode(null);
-    }
   };
 
   const handleDelHeader = (index: number) => {
@@ -142,7 +126,7 @@ const GraphiQLEditor: React.FC<Props> = ({
         <div className={styles.urlLine}>
           <input
             type="text"
-            value={endpoint}
+            value={endpoint.trim()}
             onChange={(e) => setEndpoint(e.target.value)}
             placeholder="Endpoint URL"
             className={styles.editorInput}
@@ -282,8 +266,9 @@ const GraphiQLEditor: React.FC<Props> = ({
           />
         )}
       </section>
-      <UIButton onClick={handleRequest}>Send request</UIButton>
-      <UIButton onClick={handleUrl}>Send url</UIButton>
+      <UIButton onClick={handleUrl} disabled={endpoint.length === 0}>
+        Send request
+      </UIButton>
       <section>
         <div className={styles.titleLine}>
           <h3 className={styles.sectionTitle}>Response:</h3>
@@ -291,13 +276,15 @@ const GraphiQLEditor: React.FC<Props> = ({
         </div>
 
         <div className={styles.response}>
-          {response && (
+          {isLoading ? (
+            <Spinner />
+          ) : response ? (
             <JsonView
               data={response}
               shouldExpandNode={allExpanded}
               style={defaultStyles}
             />
-          )}
+          ) : null}
         </div>
       </section>
       <section>
