@@ -15,6 +15,7 @@ import GraphQLSchemaViewer from './GraphQLSchemaViewer';
 import { useRouter } from 'next/navigation';
 import { Spinner } from '../spinner/Spinner';
 import styles from './GraphiQLEditor.module.css';
+import { RoutePaths } from '@/constants/routePaths';
 
 export interface Props {
   paramEndpoint?: string;
@@ -102,7 +103,7 @@ const GraphiQLEditor: React.FC<Props> = ({
     const bodyBase64 = btoa(
       encodeURIComponent(JSON.stringify({ query, variables }))
     );
-    const newUrl = `/GraphiQL-client/${endpointUrlBase64}/${bodyBase64}?${new URLSearchParams(headersObj).toString()}`;
+    const newUrl = `${RoutePaths.GRAPHIQL}/${endpointUrlBase64}/${bodyBase64}?${new URLSearchParams(headersObj).toString()}`;
     router.push(newUrl);
   };
 
