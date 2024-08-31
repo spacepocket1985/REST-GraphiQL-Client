@@ -277,7 +277,7 @@ const GraphiQLEditor: React.FC<Props> = ({
         </div>
 
         <div className={styles.response}>
-          {isLoading ? (
+          {isLoading && endpoint ? (
             <Spinner />
           ) : response ? (
             <JsonView

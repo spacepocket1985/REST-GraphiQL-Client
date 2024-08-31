@@ -38,8 +38,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       if (!user) {
         if (
           privateRoutes.includes(pathname as RoutePaths) ||
-          pathname.startsWith(RoutePaths.GRAPHIQL) ||
-          pathname.startsWith(RoutePaths.RESTFULL) ||
+          pathname.includes(RoutePaths.GRAPHIQL) ||
+          pathname.includes(RoutePaths.RESTFULL) ||
           pathname.startsWith(RoutePaths.HISTORY)
         )
           router.push(RoutePaths.WELCOME);
