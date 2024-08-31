@@ -70,7 +70,6 @@ export default function RESTfullPage({
 
   const handleEndpointChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const url = event.target.value;
-    console.log('!!! endpoint ', endpoint);
 
     setEndpoint(url);
     updateRoute(method, url || ' ', requestBody, Array.from(headers));
@@ -238,6 +237,12 @@ export default function RESTfullPage({
                         const updatedPairs = new Map(headers);
                         updatedPairs.delete(key);
                         setHeaders(updatedPairs);
+                        updateRoute(
+                          method,
+                          endpoint,
+                          requestBody,
+                          Array.from(updatedPairs)
+                        );
                       }}
                     >
                       Remove
