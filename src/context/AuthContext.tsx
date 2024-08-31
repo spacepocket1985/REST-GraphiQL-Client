@@ -18,6 +18,7 @@ const privateRoutes = [
   RoutePaths.GRAPHIQL,
   RoutePaths.RESTFULL,
   RoutePaths.HISTORY,
+  RoutePaths.GRAPHIQL,
 ];
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -35,7 +36,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const fetchData = async () => {
       if (loading) return;
       if (!user) {
-        if (privateRoutes.includes(pathname as RoutePaths))
+        if (
+          privateRoutes.includes(pathname as RoutePaths) ||
+          pathname.startsWith(RoutePaths.GRAPHIQL) ||
+          pathname.startsWith(RoutePaths.RESTFULL) ||
+          pathname.startsWith(RoutePaths.HISTORY)
+        )
           router.push(RoutePaths.WELCOME);
         setName(null);
         setIsLoading(false);

@@ -33,7 +33,7 @@ export default function Header() {
       className={`${styles['stickyHeader']} ${isScroll ? `${styles['opacity-70']} ${styles['transition-all']}` : ''}`}
     >
       <div className={styles.headerWrapper}>
-        <UIButton text="Logo" />
+        <UIButton text="REST/Graph" />
         <div className={styles.menuWrapper}>
           <UIButton text="Language Toggle" />
           {user ? (

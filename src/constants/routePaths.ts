@@ -3,6 +3,6 @@ export enum RoutePaths {
   SIGNIN = '/auth/sign-in',
   SIGNUP = '/auth/sign-up',
   RESTFULL = '/RESTfull-client',
-  GRAPHIQL = '/GraphiQL-client',
+  GRAPHIQL = '/GRAPHQL',
   HISTORY = '/history',
 }

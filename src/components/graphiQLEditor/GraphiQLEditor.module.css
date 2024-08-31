@@ -1,0 +1,81 @@
+.editorWrapper {
+  width: 50rem;
+}
+
+.headerWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btnDel {
+  padding: 0.5rem 1rem;
+}
+
+.editorInput {
+  width: 100%;
+}
+
+.titleLine,
+.urlLine {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.titleLine h3 {
+  flex-grow: 1;
+}
+
+.sectionTitle {
+  margin-bottom: 0.5rem;
+  padding: 0.8rem;
+  text-align: start;
+  background-color: var(--third-color);
+  border: 0.1rem solid var(--third-color);
+  border-radius: 0.4rem;
+  color: white;
+  cursor: pointer;
+}
+
+.status {
+  margin-bottom: 0.5rem;
+  padding: 0.9rem;
+  text-align: start;
+  background-color: var(--fourth-color);
+  border: 0.1rem solid var(--fourth-color);
+  border-radius: 0.4rem;
+  color: white;
+  cursor: pointer;
+}
+
+.url {
+  margin-bottom: 0.5rem;
+  padding: 0.4rem;
+  text-align: start;
+  background-color: var(--fourth-color);
+  border: 0.1rem solid var(--fourth-color);
+  border-radius: 0.4rem;
+  color: white;
+}
+
+.myCodeMirror {
+  background-color: var(--fourh-color);
+  border: 0.2rem solid var(--third-color);
+  border-radius: 0.4rem;
+}
+
+.graphSection {
+  transition: all 0.3s;
+}
+
+.response {
+  text-align: start;
+}
+
+.response span {
+  padding-right: 1rem;
+  word-break: normal;
+}
