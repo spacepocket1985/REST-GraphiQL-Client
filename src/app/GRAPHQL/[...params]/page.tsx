@@ -4,6 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import GraphiQLEditor from '@/components/graphiQLEditor/GraphiQLEditor';
 import styles from './page.module.css';
+import { useAuth } from '@/context/AuthContext';
+import { Spinner } from '@/components/spinner/Spinner';
+import { onError } from '@/utils/firebase';
 
 const GraphQLPage = () => {
   const searchParams = useSearchParams();
@@ -20,25 +23,37 @@ const GraphQLPage = () => {
   const [statusCode, setStatusCode] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const { user, isLoading: loading } = useAuth();
   useEffect(() => {
     const params = window.location.pathname.split('/').slice(-2);
     const [encodedEndpoint, encodedBody] = params;
 
-    const decodedEndpoint = Buffer.from(encodedEndpoint, 'base64').toString(
-      'utf-8'
-    );
-    const decodedBody = decodeURIComponent(
-      Buffer.from(encodedBody, 'base64').toString('utf-8')
-    );
-
-    setEndpoint(decodedEndpoint);
+    try {
+      const decodedEndpoint = Buffer.from(encodedEndpoint, 'base64').toString(
+        'utf-8'
+      );
+      setEndpoint(decodedEndpoint);
+    } catch (error) {
+      if (error instanceof Error) {
+        setEndpoint(Buffer.from('').toString('base64'));
+        onError(error);
+      }
+    }
 
     try {
+      const decodedBody = decodeURIComponent(
+        Buffer.from(encodedBody, 'base64').toString('utf-8')
+      );
+
       const bodyJson = JSON.parse(decodedBody);
       setQuery(bodyJson.query || '');
       setVariables(bodyJson.variables || '');
     } catch (error) {
-      console.error('Ошибка при парсинге body:', error);
+      setQuery('');
+      setVariables('');
+      if (error instanceof Error) {
+        onError(error);
+      }
     }
 
     const headersObj = Object.fromEntries([...searchParams.entries()]);
@@ -89,7 +104,7 @@ const GraphQLPage = () => {
       setIsLoading(false);
     }
   };
-
+  if (loading || !user) return <Spinner />;
   return (
     <div className={styles.wrapper}>
       <h1>GraphiQL Client</h1>
