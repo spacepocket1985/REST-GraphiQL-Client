@@ -4,6 +4,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 import styles from './page.module.css';
 import { UIButton } from '@/components/ui/UIButton';
+import { Spinner } from '@/components/spinner/Spinner';
+import { useAuth } from '@/context/AuthContext';
 
 type ResponseState = {
   statusCode: number | string;
@@ -19,6 +21,8 @@ export default function RESTfullPage({
     bodyBase64Encoded: string;
   };
 }) {
+  const { isLoading } = useAuth();
+
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -62,6 +66,8 @@ export default function RESTfullPage({
     statusCode: '',
     body: '{}',
   });
+
+  if (isLoading) return <Spinner />;
 
   const handleMethodChange = (selectedMethod: string) => {
     setMethod(selectedMethod);
