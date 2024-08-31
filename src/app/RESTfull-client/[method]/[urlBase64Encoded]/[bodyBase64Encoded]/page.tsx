@@ -1,11 +1,9 @@
 'use client';
-
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { auth, fetchUserName } from '@/utils/firebase';
 
 import styles from './page.module.css';
+import { UIButton } from '@/components/ui/UIButton';
 
 type ResponseState = {
   statusCode: number | string;
@@ -21,23 +19,6 @@ export default function RESTfullPage({
     bodyBase64Encoded: string;
   };
 }) {
-  const [user, loading] = useAuthState(auth);
-  const [, setName] = useState<null | string>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (loading) return;
-      if (!user) {
-        setName(null);
-        return router.push('/');
-      }
-      const userName = await fetchUserName(user);
-      setName(userName);
-    };
-
-    fetchData();
-  }, [user, loading]);
-
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -82,26 +63,25 @@ export default function RESTfullPage({
     body: '{}',
   });
 
-  useEffect(() => {
-    updateRoute(
-      method,
-      endpoint || ' ',
-      requestBody || ' ',
-      Array.from(headers)
-    );
-  }, [method, endpoint, requestBody, headers]);
-
   const handleMethodChange = (selectedMethod: string) => {
     setMethod(selectedMethod);
+    updateRoute(selectedMethod, endpoint, requestBody, Array.from(headers));
   };
 
   const handleEndpointChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const url = event.target.value;
+    console.log('!!! endpoint ', endpoint);
+
     setEndpoint(url);
+    updateRoute(method, url || ' ', requestBody, Array.from(headers));
   };
 
   const handleRequestBodyChange = (body: string) => {
     setRequestBody(body);
+  };
+
+  const handleRequestBodyBlur = () => {
+    updateRoute(method, endpoint, requestBody || ' ', Array.from(headers));
   };
 
   const handleHeaderChange = (
@@ -123,6 +103,7 @@ export default function RESTfullPage({
     }
 
     setHeaders(new Map(updatedHeadersArray));
+    updateRoute(method, endpoint, requestBody, updatedHeadersArray);
   };
 
   const addToLocalStorage = (
@@ -189,6 +170,7 @@ export default function RESTfullPage({
       addToLocalStorage(method, endpoint, requestBody, Array.from(headers));
       updateRoute(method, endpoint, requestBody, Array.from(headers));
     } catch (error) {
+      console.error(error);
       const message =
         error instanceof Error ? error.message : 'An unknown error occurred';
       setResponse({
@@ -247,7 +229,7 @@ export default function RESTfullPage({
                         handleHeaderChange(key, e.target.value, index, false)
                       }
                     />
-                    <button
+                    <UIButton
                       onClick={() => {
                         const updatedPairs = new Map(headers);
                         updatedPairs.delete(key);
@@ -255,14 +237,14 @@ export default function RESTfullPage({
                       }}
                     >
                       Remove
-                    </button>
+                    </UIButton>
                   </div>
                 ))}
-                <button
+                <UIButton
                   onClick={() => setHeaders(new Map(headers).set('', ''))}
                 >
                   Add Header
-                </button>
+                </UIButton>
               </div>
 
               {/* Request Body editor */}
@@ -272,11 +254,14 @@ export default function RESTfullPage({
                   value={requestBody}
                   className={`${styles.RESTTextarea} ${styles.bodytextarea}`}
                   onChange={(e) => handleRequestBodyChange(e.target.value)}
+                  onBlur={handleRequestBodyBlur}
                   disabled={method === 'GET' || method === 'DELETE'}
                 />
               </div>
 
-              <button onClick={sendRequest}>Send Request</button>
+              <UIButton onClick={sendRequest} disabled={endpoint === ' '}>
+                Send Request
+              </UIButton>
             </section>
             <section>
               <p>Status: {response.statusCode}</p>
