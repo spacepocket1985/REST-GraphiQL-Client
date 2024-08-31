@@ -147,12 +147,16 @@ export default function RESTfullPage({
   };
 
   const sendRequest = async () => {
+    const filteredHeaders = Array.from(headers)
+      .filter(([key]) => key.trim() !== '')
+      .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {});
+
     try {
       const response = await fetch(endpoint, {
         method: method,
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
-          ...Object.fromEntries(headers),
+          ...filteredHeaders,
         },
         body:
           method !== 'GET' && method !== 'DELETE'
