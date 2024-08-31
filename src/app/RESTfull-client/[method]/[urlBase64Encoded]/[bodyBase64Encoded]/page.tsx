@@ -171,7 +171,6 @@ export default function RESTfullPage({
       if (method !== 'HEAD' && method !== 'OPTIONS') {
         jsonResponse = await responseFetch.json();
       }
-      // const jsonResponse = await responseFetch.json();
       setResponse(jsonResponse);
       if (!responseFetch.ok) {
         const errorCode = jsonResponse.error?.code || responseFetch.status;
