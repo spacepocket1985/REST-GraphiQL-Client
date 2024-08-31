@@ -1,4 +1,6 @@
 'use client';
+import { allExpanded, defaultStyles, JsonView } from 'react-json-view-lite';
+import 'react-json-view-lite/dist/index.css';
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -6,11 +8,6 @@ import styles from './page.module.css';
 import { UIButton } from '@/components/ui/UIButton';
 import { Spinner } from '@/components/spinner/Spinner';
 import { useAuth } from '@/context/AuthContext';
-
-type ResponseState = {
-  statusCode: number | string;
-  body: string;
-};
 
 export default function RESTfullPage({
   params,
@@ -62,10 +59,8 @@ export default function RESTfullPage({
   const [requestBody, setRequestBody] = useState(initParamsDecoded.body);
 
   const [headers, setHeaders] = useState(initHeaders);
-  const [response, setResponse] = useState<ResponseState>({
-    statusCode: '',
-    body: '{}',
-  });
+  const [response, setResponse] = useState('{}');
+  const [statusCode, setStatusCode] = useState(' ');
 
   if (isLoading) return <Spinner />;
 
@@ -157,7 +152,7 @@ export default function RESTfullPage({
       .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {});
 
     try {
-      const response = await fetch(endpoint, {
+      const responseFetch = await fetch(endpoint, {
         method: method,
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
@@ -169,125 +164,119 @@ export default function RESTfullPage({
             : undefined,
       });
 
-      const responseBody = await response.text();
-      setResponse({
-        statusCode: response.status,
-        body: responseBody
-          ? JSON.stringify(JSON.parse(responseBody), null, 2)
-          : '',
-      });
+      const jsonResponse = await responseFetch.json();
+      setResponse(jsonResponse);
+      if (!responseFetch.ok) {
+        const errorCode = jsonResponse.error?.code || responseFetch.status;
+        setStatusCode(errorCode);
+      } else {
+        setStatusCode(responseFetch.status.toString());
+      }
+
       addToLocalStorage(method, endpoint, requestBody, Array.from(headers));
       updateRoute(method, endpoint, requestBody, Array.from(headers));
     } catch (error) {
       console.error(error);
       const message =
         error instanceof Error ? error.message : 'An unknown error occurred';
-      setResponse({
-        statusCode: 'error',
-        body: message,
-      });
+      setResponse(message);
+      setStatusCode(`error`);
     }
   };
 
   return (
     <>
       <div className={styles.RESTWrapper}>
-        <>
-          <div>
-            <h3 className={styles.wrapperSubTitle}>REST Client</h3>
+        <h1 className={styles.wrapperSubTitle}>REST Client</h1>
 
-            <section>
-              <div>
-                <label>Method: </label>
-                <select
-                  onChange={(e) => handleMethodChange(e.target.value)}
-                  value={method}
-                >
-                  <option value="GET">GET</option>
-                  <option value="POST">POST</option>
-                  <option value="PUT">PUT</option>
-                  <option value="PATCH">PATCH</option>
-                  <option value="DELETE">DELETE</option>
-                </select>
-              </div>
-              <div>
-                <label>Endpoint URL:</label>
-                <input
-                  type="text"
-                  onChange={handleEndpointChange}
-                  value={endpoint}
-                />
-              </div>
-              {/* Headers editor */}
-              <div>
-                {Array.from(headers).map(([key, value], index) => (
-                  <div key={index}>
-                    <input
-                      type="text"
-                      placeholder="Header Key"
-                      value={key}
-                      onChange={(e) => {
-                        handleHeaderChange(key, e.target.value, index, true);
-                      }}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Header Value"
-                      value={value}
-                      onChange={(e) =>
-                        handleHeaderChange(key, e.target.value, index, false)
-                      }
-                    />
-                    <UIButton
-                      onClick={() => {
-                        const updatedPairs = new Map(headers);
-                        updatedPairs.delete(key);
-                        setHeaders(updatedPairs);
-                        updateRoute(
-                          method,
-                          endpoint,
-                          requestBody,
-                          Array.from(updatedPairs)
-                        );
-                      }}
-                    >
-                      Remove
-                    </UIButton>
-                  </div>
-                ))}
-                <UIButton
-                  onClick={() => setHeaders(new Map(headers).set('', ''))}
-                >
-                  Add Header
-                </UIButton>
-              </div>
-
-              {/* Request Body editor */}
-              <div>
-                <label>Body: </label>
-                <textarea
-                  value={requestBody}
-                  className={`${styles.RESTTextarea} ${styles.bodytextarea}`}
-                  onChange={(e) => handleRequestBodyChange(e.target.value)}
-                  onBlur={handleRequestBodyBlur}
-                  disabled={method === 'GET' || method === 'DELETE'}
-                />
-              </div>
-
-              <UIButton onClick={sendRequest} disabled={endpoint === ' '}>
-                Send Request
-              </UIButton>
-            </section>
-            <section>
-              <p>Status: {response.statusCode}</p>
-              <textarea
-                readOnly
-                className={styles.RESTTextarea}
-                value={response.body}
+        <section>
+          <label>Method: </label>
+          <select
+            onChange={(e) => handleMethodChange(e.target.value)}
+            value={method}
+          >
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="PATCH">PATCH</option>
+            <option value="DELETE">DELETE</option>
+          </select>
+        </section>
+        <section>
+          <label>Endpoint URL:</label>
+          <input type="text" onChange={handleEndpointChange} value={endpoint} />
+        </section>
+        {/* Headers editor */}
+        <section>
+          {Array.from(headers).map(([key, value], index) => (
+            <div key={index}>
+              <input
+                type="text"
+                placeholder="Header Key"
+                value={key}
+                onChange={(e) => {
+                  handleHeaderChange(key, e.target.value, index, true);
+                }}
               />
-            </section>
+              <input
+                type="text"
+                placeholder="Header Value"
+                value={value}
+                onChange={(e) =>
+                  handleHeaderChange(key, e.target.value, index, false)
+                }
+              />
+              <UIButton
+                onClick={() => {
+                  const updatedPairs = new Map(headers);
+                  updatedPairs.delete(key);
+                  setHeaders(updatedPairs);
+                  updateRoute(
+                    method,
+                    endpoint,
+                    requestBody,
+                    Array.from(updatedPairs)
+                  );
+                }}
+              >
+                Remove
+              </UIButton>
+            </div>
+          ))}
+          <UIButton onClick={() => setHeaders(new Map(headers).set('', ''))}>
+            Add Header
+          </UIButton>
+        </section>
+        {/* Request Body editor */}
+        <section className={styles.requestBodyStyle}>
+          <label>Body: </label>
+          <textarea
+            value={requestBody}
+            className={`${styles.RESTTextarea} ${styles.bodytextarea}`}
+            onChange={(e) => handleRequestBodyChange(e.target.value)}
+            onBlur={handleRequestBodyBlur}
+            disabled={method === 'GET' || method === 'DELETE'}
+          />
+        </section>
+        <section>
+          <UIButton onClick={sendRequest} disabled={endpoint === ' '}>
+            Send Request
+          </UIButton>
+        </section>
+
+        {/* Response */}
+
+        <section className={styles.RestResponceSection}>
+          <h3 className={styles.RestTitleSection}>Response:</h3>
+          <p>Status: {statusCode}</p>
+          <div className={styles.response}>
+            <JsonView
+              data={response}
+              shouldExpandNode={allExpanded}
+              style={defaultStyles}
+            />
           </div>
-        </>
+        </section>
       </div>
     </>
   );
