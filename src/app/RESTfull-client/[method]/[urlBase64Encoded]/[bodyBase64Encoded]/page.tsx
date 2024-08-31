@@ -159,12 +159,19 @@ export default function RESTfullPage({
           ...filteredHeaders,
         },
         body:
-          method !== 'GET' && method !== 'DELETE'
+          method !== 'GET' &&
+          method !== 'DELETE' &&
+          method !== 'HEAD' &&
+          method !== 'OPTIONS'
             ? JSON.stringify(JSON.parse(requestBody))
             : undefined,
       });
 
-      const jsonResponse = await responseFetch.json();
+      let jsonResponse;
+      if (method !== 'HEAD' && method !== 'OPTIONS') {
+        jsonResponse = await responseFetch.json();
+      }
+      // const jsonResponse = await responseFetch.json();
       setResponse(jsonResponse);
       if (!responseFetch.ok) {
         const errorCode = jsonResponse.error?.code || responseFetch.status;
@@ -200,6 +207,8 @@ export default function RESTfullPage({
             <option value="PUT">PUT</option>
             <option value="PATCH">PATCH</option>
             <option value="DELETE">DELETE</option>
+            <option value="HEAD">HEAD</option>
+            <option value="OPTIONS">OPTIONS</option>
           </select>
         </section>
         <section>
@@ -255,7 +264,12 @@ export default function RESTfullPage({
             className={`${styles.RESTTextarea} ${styles.bodytextarea}`}
             onChange={(e) => handleRequestBodyChange(e.target.value)}
             onBlur={handleRequestBodyBlur}
-            disabled={method === 'GET' || method === 'DELETE'}
+            disabled={
+              method === 'GET' ||
+              method === 'DELETE' ||
+              method === 'HEAD' ||
+              method == 'OPTIONS'
+            }
           />
         </section>
         <section>
