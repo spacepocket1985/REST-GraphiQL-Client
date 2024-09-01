@@ -22,7 +22,7 @@ export default function WelcomePage() {
                 Available utilities and features
               </h3>
               <div className={styles.welcomeTools}>
-                <UILink text="REST Client" href="" />
+                <UILink text="REST Client" href={RoutePaths.RESTFULL} />
                 <UILink text="GraphiQL Client" href={RoutePaths.GRAPHIQL} />
                 <UILink text="History" href="" />
               </div>
