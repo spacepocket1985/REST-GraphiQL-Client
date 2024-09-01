@@ -315,7 +315,7 @@ export default function RESTfullPage({
             minHeight="15rem"
           />
           {/* Prettify */}
-          <UIButton onClick={handlePrettifyClick}>Prettify</UIButton>
+          <UIButton onClick={handlePrettifyClick}>{t('prettify')}</UIButton>
         </section>
         <section>
           <UIButton onClick={sendRequest} disabled={endpoint === ' '}>
