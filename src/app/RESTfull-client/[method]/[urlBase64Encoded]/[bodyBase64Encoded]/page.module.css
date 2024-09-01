@@ -52,6 +52,7 @@
 .requestBodyStyle {
   display: flex;
   align-items: center;
+  gap: 5px;
 }
 
 .bodytextarea {
@@ -72,4 +73,15 @@
 .response span {
   padding-right: 1rem;
   word-break: normal;
+}
+
+.myCodeMirror {
+  background-color: var(--fourh-color);
+  border: 0.2rem solid var(--third-color);
+  border-radius: 0.4rem;
+}
+
+.readOnlyEditor {
+  background-color: #d4d4d4;
+  cursor: not-allowed;
 }
