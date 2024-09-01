@@ -8,6 +8,9 @@ import { Spinner } from '@/components/spinner/Spinner';
 import { RoutePaths } from '@/constants/routePaths';
 
 import styles from './page.module.css';
+import Team from '@/components/about/Team';
+import AppInfo from '@/components/about/AppInfo';
+import RsSchool from '@/components/about/RsSchool';
 
 export default function WelcomePage() {
   const { user, name, isLoading } = useAuth();
@@ -36,15 +39,9 @@ export default function WelcomePage() {
         ) : (
           <>
             <div className={styles.welcomeSection}>
-              <h3 className={styles.welcomeSectionTitle}>
-                {t('titleAboutApp')}
-              </h3>
-              <p className={styles.welcomeSectionInfo}>{t('description')}</p>
-            </div>
-            <div className={styles.welcomeSection}>
-              <h3 className={styles.welcomeSectionTitle}>
-                {t('titleAboutTeam')}
-              </h3>
+              <AppInfo />
+              <Team />
+              <RsSchool />
             </div>
           </>
         )}

@@ -1,0 +1,63 @@
+.teamWrapper {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 1rem;
+  border-radius: 1rem;
+  background-color: rgba(165, 186, 200, 0.2);
+}
+
+.name {
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--second-color);
+  color: #fff;
+  border-radius: 1rem 1rem 0 0;
+}
+
+.avatar {
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.title {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background-color: var(--fourth-color);
+  color: #fff;
+  border-radius: 1rem;
+  text-align: start;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+}
+
+.info {
+  width: 100%;
+  text-align: justify;
+  padding: 1rem;
+  background-color: rgba(165, 186, 200, 0.4);
+  color: var(--third-color);
+  border-radius: 1rem;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card .info {
+  text-align: center;
+  font-weight: 500;
+}
+
+.tag {
+  background-color: rgba(165, 186, 200, 0.4);
+  border-radius: 1rem;
+}
