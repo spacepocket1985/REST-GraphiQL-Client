@@ -39,7 +39,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         if (
           privateRoutes.includes(pathname as RoutePaths) ||
           pathname.includes(RoutePaths.GRAPHIQL) ||
-          pathname.includes(RoutePaths.RESTFULL) ||
+          pathname.includes('/RESTfull-client') ||
           pathname.startsWith(RoutePaths.HISTORY)
         )
           router.push(RoutePaths.WELCOME);

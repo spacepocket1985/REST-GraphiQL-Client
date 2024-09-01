@@ -1,5 +1,3 @@
-import { useState } from 'react';
-import Image from 'next/image';
 import { FieldValues, Path, UseFormRegister } from 'react-hook-form';
 import styles from './UIFormInput.module.css';
 
@@ -20,44 +18,17 @@ export const UIFormInput = <T extends FieldValues>({
   placeholder,
   error = '',
 }: UiFormInputProps<T>): JSX.Element => {
-  const [showPassword, setShowPassword] = useState(false);
-
-  const handleTogglePassword = () => {
-    setShowPassword(!showPassword);
-  };
   return (
     <label htmlFor={name} className={styles.inputLabel}>
       <input
         id={name}
-        type={showPassword ? 'text' : type}
         autoComplete={type === 'password' ? 'on' : ''}
+        type={type}
         className={styles.uiInput}
         {...register(name, { required })}
         placeholder={placeholder}
       />
-      {type === 'password' && (
-        <span
-          aria-hidden="true"
-          className={styles.pasImgWrapper}
-          onClick={handleTogglePassword}
-        >
-          {showPassword ? (
-            <Image
-              src="/iconView.png"
-              alt="View Password"
-              width={16}
-              height={16}
-            />
-          ) : (
-            <Image
-              src="/iconNoView.png"
-              alt="Hide Password"
-              width={16}
-              height={16}
-            />
-          )}
-        </span>
-      )}
+
       <div className={styles.invalidFeedback}>{error}</div>
     </label>
   );

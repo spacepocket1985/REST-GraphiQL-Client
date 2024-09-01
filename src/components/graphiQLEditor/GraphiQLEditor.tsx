@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 import { Spinner } from '../spinner/Spinner';
 import styles from './GraphiQLEditor.module.css';
 import { RoutePaths } from '@/constants/routePaths';
+import { useTranslation } from 'react-i18next';
 
 export interface Props {
   paramEndpoint?: string;
@@ -53,6 +54,7 @@ const GraphiQLEditor: React.FC<Props> = ({
   const [isHeadersVisible, setIsHeadersVisible] = useState(true);
   const [isVariablesVisible, setIsVariablesVisible] = useState(true);
 
+  const { t } = useTranslation();
   const router = useRouter();
 
   useEffect(() => {
@@ -129,20 +131,20 @@ const GraphiQLEditor: React.FC<Props> = ({
             type="text"
             value={endpoint.trim()}
             onChange={(e) => setEndpoint(e.target.value)}
-            placeholder="Endpoint URL"
+            placeholder={t('endpointURL')}
             className={styles.editorInput}
           />
-          <p className={styles.url}>URL</p>
+          <p className={styles.url}>{t('url')}</p>
         </div>
         <div className={styles.urlLine}>
           <input
             type="text"
             value={sdlUrl}
             onChange={(e) => setSdlUrl(e.target.value)}
-            placeholder="SDL URL"
+            placeholder={t('endpoinSDL')}
             className={styles.editorInput}
           />
-          <p className={styles.url}>SDL</p>
+          <p className={styles.url}>{t('sdl')}</p>
         </div>
       </section>
       <section>
@@ -151,18 +153,18 @@ const GraphiQLEditor: React.FC<Props> = ({
             onClick={() => setIsHeadersVisible(!isHeadersVisible)}
             className={styles.sectionTitle}
           >
-            Headers {isHeadersVisible ? '[show]' : '[hide]'}
+            {t('headers')} {!isHeadersVisible ? `${t('show')}` : `${t('hide')}`}
           </h3>
-          <UIButton onClick={addHeader}>Add Header</UIButton>
+          <UIButton onClick={addHeader}>{t('addHeader')}</UIButton>
         </div>
-        <section></section>
+
         {isHeadersVisible && (
           <>
             {headers.map((header, index) => (
               <div key={index} className={styles.headerWrapper}>
                 <input
                   type="text"
-                  placeholder="Header Key"
+                  placeholder={t('headerKey')}
                   value={header.key}
                   onChange={(e) => {
                     const newHeaders = [...headers];
@@ -172,7 +174,7 @@ const GraphiQLEditor: React.FC<Props> = ({
                 />
                 <input
                   type="text"
-                  placeholder="Header Value"
+                  placeholder={t('headerKey')}
                   value={header.value}
                   onChange={(e) => {
                     const newHeaders = [...headers];
@@ -200,9 +202,9 @@ const GraphiQLEditor: React.FC<Props> = ({
             onClick={() => setIsQueryVisible(!isQueryVisible)}
             className={styles.sectionTitle}
           >
-            Query {isQueryVisible ? '[show]' : '[hide]'}
+            {t('query')} {!isHeadersVisible ? `${t('show')}` : `${t('hide')}`}
           </h3>
-          <UIButton onClick={handlePrettify}>Prettify </UIButton>
+          <UIButton onClick={handlePrettify}>{t('prettify')}</UIButton>
         </div>
         {isQueryVisible && (
           <CodeMirror
@@ -237,7 +239,7 @@ const GraphiQLEditor: React.FC<Props> = ({
           onClick={() => setIsVariablesVisible(!isVariablesVisible)}
           className={styles.sectionTitle}
         >
-          Variables {isVariablesVisible ? '[show]' : '[hide]'}
+          {t('variables')} {!isHeadersVisible ? `${t('show')}` : `${t('hide')}`}
         </h3>
         {isVariablesVisible && (
           <CodeMirror
@@ -268,12 +270,14 @@ const GraphiQLEditor: React.FC<Props> = ({
         )}
       </section>
       <UIButton onClick={handleUrl} disabled={endpoint.length === 0}>
-        Send request
+        {t('sendRequest')}
       </UIButton>
       <section>
         <div className={styles.titleLine}>
-          <h3 className={styles.sectionTitle}>Response:</h3>
-          <p className={styles.status}>Status: {statusCode}</p>
+          <h3 className={styles.sectionTitle}>{t('response')}</h3>
+          <p className={styles.status}>
+            {t('status')} {statusCode}
+          </p>
         </div>
 
         <div className={styles.response}>
@@ -289,7 +293,7 @@ const GraphiQLEditor: React.FC<Props> = ({
         </div>
       </section>
       <section>
-        <h3 className={styles.sectionTitle}>SDL Docs:</h3>
+        <h3 className={styles.sectionTitle}>{t('sDLDocs')}</h3>
         <div className={styles.response}>
           {sdlDocs && <GraphQLSchemaViewer types={sdlDocs} />}
         </div>
