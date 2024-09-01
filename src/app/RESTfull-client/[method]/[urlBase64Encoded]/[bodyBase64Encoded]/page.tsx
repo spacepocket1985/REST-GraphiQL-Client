@@ -8,6 +8,7 @@ import styles from './page.module.css';
 import { UIButton } from '@/components/ui/UIButton';
 import { Spinner } from '@/components/spinner/Spinner';
 import { useAuth } from '@/context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 export default function RESTfullPage({
   params,
@@ -18,7 +19,8 @@ export default function RESTfullPage({
     bodyBase64Encoded: string;
   };
 }) {
-  const { isLoading } = useAuth();
+  const { isLoading, user } = useAuth();
+  const { t } = useTranslation();
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -62,7 +64,7 @@ export default function RESTfullPage({
   const [response, setResponse] = useState('{}');
   const [statusCode, setStatusCode] = useState(' ');
 
-  if (isLoading) return <Spinner />;
+  if (isLoading || !user) return <Spinner />;
 
   const handleMethodChange = (selectedMethod: string) => {
     setMethod(selectedMethod);
@@ -196,10 +198,10 @@ export default function RESTfullPage({
   return (
     <>
       <div className={styles.RESTWrapper}>
-        <h1 className={styles.wrapperSubTitle}>REST Client</h1>
+        <h1 className={styles.wrapperSubTitle}>{t('restClient')}</h1>
 
         <section>
-          <label>Method: </label>
+          <label>{t('method')}</label>
           <select
             onChange={(e) => handleMethodChange(e.target.value)}
             value={method}
@@ -214,7 +216,7 @@ export default function RESTfullPage({
           </select>
         </section>
         <section>
-          <label>Endpoint URL:</label>
+          <label>{t('endpointURL')}</label>
           <input type="text" onChange={handleEndpointChange} value={endpoint} />
         </section>
         {/* Headers editor */}
@@ -223,7 +225,7 @@ export default function RESTfullPage({
             <div key={index}>
               <input
                 type="text"
-                placeholder="Header Key"
+                placeholder={t('headerValue')}
                 value={key}
                 onChange={(e) => {
                   handleHeaderChange(key, e.target.value, index, true);
@@ -231,7 +233,7 @@ export default function RESTfullPage({
               />
               <input
                 type="text"
-                placeholder="Header Value"
+                placeholder={t('headerValue')}
                 value={value}
                 onChange={(e) =>
                   handleHeaderChange(key, e.target.value, index, false)
@@ -250,17 +252,17 @@ export default function RESTfullPage({
                   );
                 }}
               >
-                Remove
+                {t('remove')}
               </UIButton>
             </div>
           ))}
           <UIButton onClick={() => setHeaders(new Map(headers).set('', ''))}>
-            Add Header
+            {t('addHeader')}
           </UIButton>
         </section>
         {/* Request Body editor */}
         <section className={styles.requestBodyStyle}>
-          <label>Body: </label>
+          <label>{t('body')} </label>
           <textarea
             value={requestBody}
             className={`${styles.RESTTextarea} ${styles.bodytextarea}`}
@@ -276,15 +278,17 @@ export default function RESTfullPage({
         </section>
         <section>
           <UIButton onClick={sendRequest} disabled={endpoint === ' '}>
-            Send Request
+            {t('sendRequest')}
           </UIButton>
         </section>
 
         {/* Response */}
 
         <section className={styles.RestResponceSection}>
-          <h3 className={styles.RestTitleSection}>Response:</h3>
-          <p>Status: {statusCode}</p>
+          <h3 className={styles.RestTitleSection}> {t('response')} </h3>
+          <p>
+            {t('status')} {statusCode}
+          </p>
           <div className={styles.response}>
             <JsonView
               data={response}

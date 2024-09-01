@@ -52,14 +52,12 @@
 .requestBodyStyle {
   display: flex;
   align-items: center;
-
 }
 
 .bodytextarea {
   width: 300px;
   height: 150px;
 }
-
 
 .response {
   height: 500px;

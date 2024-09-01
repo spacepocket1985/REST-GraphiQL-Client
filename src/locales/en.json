@@ -5,6 +5,7 @@
   "greetings": "Welcome!",
   "titleAboutApp": "About application.",
   "titleAvailableUtils": "Available utilities and features",
+  "titleAboutTeam": "About the developers",
   "greetingsUser": "Welcome back",
   "description": "lightweight application that combines the functionalities of two leading API clients: Postman and GraphiQL. It is designed for developers working with both REST and GraphQL APIs, providing an intuitive interface for creating, testing, and documenting requests.",
   "restClient": "REST Client",
@@ -47,6 +48,7 @@
   "sdl": "SDL",
   "headers": "Headers",
   "addHeader": "Add header",
+  "remove": "Remove",
   "headerKey": "header key",
   "headerValue": "header value",
   "query": "Query",
@@ -55,5 +57,7 @@
   "sendRequest": "Send request",
   "response": "Response:",
   "status": "Status code:",
-  "sDLDocs": "SDL Docs:"
+  "sDLDocs": "SDL Docs:",
+  "method": "Method: ",
+  "body": "Body: "
 }

@@ -23,6 +23,7 @@ export const UIFormInput = <T extends FieldValues>({
       <input
         id={name}
         autoComplete={type === 'password' ? 'on' : ''}
+        type={type}
         className={styles.uiInput}
         {...register(name, { required })}
         placeholder={placeholder}
