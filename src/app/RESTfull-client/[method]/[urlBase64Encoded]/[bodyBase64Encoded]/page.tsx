@@ -106,29 +106,7 @@ export default function RESTfullPage({
     updateRoute(method, endpoint, requestBody, updatedHeadersArray);
   };
 
-  const addToLocalStorage = (
-    method: string,
-    endpoint: string,
-    body: string,
-    headers: [string, string][]
-  ) => {
-    const existingEntries = JSON.parse(
-      localStorage.getItem('rest-data') || '[]'
-    );
-
-    const currentData = {
-      method,
-      endpoint,
-      body,
-      headers: Object.fromEntries(headers),
-    };
-
-    const updatedEntries = [...existingEntries, currentData];
-
-    localStorage.setItem('rest-data', JSON.stringify(updatedEntries));
-  };
-
-  const updateRoute = (
+  const createHref = (
     method: string,
     endpoint: string,
     body: string,
@@ -142,8 +120,33 @@ export default function RESTfullPage({
     ).toString();
 
     const href = `/RESTfull-client/${method}/${encodedUrl}${body ? `/${encodedBody}` : ''}?${queryParams}`;
+    return href;
+  };
 
-    router.replace(href, undefined);
+  const addToLocalStorage = (
+    method: string,
+    endpoint: string,
+    body: string,
+    headers: [string, string][]
+  ) => {
+    const existingEntries = JSON.parse(
+      localStorage.getItem('rest-data') || '[]'
+    );
+
+    const currentData = createHref(method, endpoint, body, headers);
+
+    const updatedEntries = [...existingEntries, currentData];
+
+    localStorage.setItem('rest-data', JSON.stringify(updatedEntries));
+  };
+
+  const updateRoute = (
+    method: string,
+    endpoint: string,
+    body: string,
+    headers: [string, string][]
+  ) => {
+    router.replace(createHref(method, endpoint, body, headers), undefined);
   };
 
   const sendRequest = async () => {
@@ -179,8 +182,8 @@ export default function RESTfullPage({
         setStatusCode(responseFetch.status.toString());
       }
 
-      addToLocalStorage(method, endpoint, requestBody, Array.from(headers));
       updateRoute(method, endpoint, requestBody, Array.from(headers));
+      addToLocalStorage(method, endpoint, requestBody, Array.from(headers));
     } catch (error) {
       console.error(error);
       const message =
