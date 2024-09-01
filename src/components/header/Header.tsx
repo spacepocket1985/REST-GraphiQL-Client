@@ -7,9 +7,12 @@ import { UIButton } from '../ui/UIButton';
 import styles from './Header.module.css';
 import { UILink } from '../ui/UILink';
 import { useAuth } from '@/context/AuthContext';
+import LanguageToggle from '../languageToggle/LanguageToggle';
+import { useTranslation } from 'react-i18next';
 
 export default function Header() {
   const { user, isLoading } = useAuth();
+  const { t } = useTranslation();
   const [isScroll, setIsScroll] = useState(false);
 
   const handleScroll = () => {
@@ -35,22 +38,22 @@ export default function Header() {
       <div className={styles.headerWrapper}>
         <UIButton text="REST/Graph" />
         <div className={styles.menuWrapper}>
-          <UIButton text="Language Toggle" />
+          <LanguageToggle />
           {user ? (
             <>
               <UIButton
-                text="Sign Out"
+                text={t('logOut')}
                 onClick={logout}
                 disabled={!!isLoading}
               />
             </>
           ) : (
             <>
-              <UILink text="Sign In" href={RoutePaths.SIGNIN} />
-              <UILink text="Sign Up" href={RoutePaths.SIGNUP} />
+              <UILink text={t('signIn')} href={RoutePaths.SIGNIN} />
+              <UILink text={t('signUp')} href={RoutePaths.SIGNUP} />
             </>
           )}
-          <UILink text="Welcome" href={RoutePaths.WELCOME} />
+          <UILink text={t('main')} href={RoutePaths.WELCOME} />
         </div>
       </div>
     </header>

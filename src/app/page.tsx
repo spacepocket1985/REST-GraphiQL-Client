@@ -1,44 +1,45 @@
 'use client';
 
-import styles from './page.module.css';
 import { UILink } from '@/components/ui/UILink';
+import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '@/context/AuthContext';
 import { Spinner } from '@/components/spinner/Spinner';
 import { RoutePaths } from '@/constants/routePaths';
 
+import styles from './page.module.css';
+
 export default function WelcomePage() {
   const { user, name, isLoading } = useAuth();
+  const { t } = useTranslation();
   if (isLoading) return <Spinner />;
 
   return (
     <>
       <div className={styles.welcomeWrapper}>
-        <h2>{name ? `Welcome Back, ${name}!` : 'Welcome!'}</h2>
+        <h2>
+          {name ? `${t('greetingsUser')}, ${name}!` : `${t('greetings')}`}
+        </h2>
         {user ? (
           <>
             <div className="welcomeSection">
               <h3 className={styles.wrapperSubTitle}>
-                Available utilities and features
+                {t('titleAvailableUtils')}
               </h3>
               <div className={styles.welcomeTools}>
-                <UILink text="REST Client" href="" />
-                <UILink text="GraphiQL Client" href={RoutePaths.GRAPHIQL} />
-                <UILink text="History" href="" />
+                <UILink text={t('restClient')} href="" />
+                <UILink text={t('graphClient')} href={RoutePaths.GRAPHIQL} />
+                <UILink text={t('history')} href="" />
               </div>
             </div>
           </>
         ) : (
           <>
             <div className={styles.welcomeSection}>
-              <h3 className={styles.welcomeSectionTitle}>Info about task</h3>
-              <p className={styles.welcomeSectionInfo}>
-                lightweight application that combines the functionalities of two
-                leading API clients: Postman and GraphiQL. It is designed for
-                developers working with both REST and GraphQL APIs, providing an
-                intuitive interface for creating, testing, and documenting
-                requests.
-              </p>
+              <h3 className={styles.welcomeSectionTitle}>
+                {t('titleAboutApp')}
+              </h3>
+              <p className={styles.welcomeSectionInfo}>{t('description')}</p>
             </div>
             <div className={styles.welcomeSection}>
               <h3 className={styles.welcomeSectionTitle}>

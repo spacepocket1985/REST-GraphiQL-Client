@@ -11,6 +11,7 @@ import { Spinner } from '@/components/spinner/Spinner';
 import Link from 'next/link';
 import { UIButton } from '@/components/ui/UIButton';
 import { useAuth } from '@/context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 type SignUpFormType = {
   name: string;
@@ -30,6 +31,7 @@ export default function SignUpPage() {
   });
 
   const { isLoading, user } = useAuth();
+  const { t } = useTranslation();
 
   const registerUser: SubmitHandler<SignUpFormType> = async ({
     name,
@@ -45,40 +47,40 @@ export default function SignUpPage() {
   if (isLoading || user) return <Spinner />;
   return (
     <>
-      <h2>Sign Up</h2>
+      <h2>{t('signUp')}</h2>
       <form onSubmit={handleSubmit(registerUser)}>
         <UIFormInput
           type="text"
           name="name"
           register={register}
-          placeholder="name"
-          error={errors.name?.message ? errors.name.message : null}
+          placeholder={t('name')}
+          error={errors.name?.message ? t(errors.name.message) : null}
           required
         />
         <UIFormInput
           type="text"
           name="email"
           register={register}
-          placeholder="email"
-          error={errors.email?.message ? errors.email.message : null}
+          placeholder={t('eMailAddress')}
+          error={errors.email?.message ? t(errors.email.message) : null}
           required
         />
         <UIFormInput
           type="password"
           name="password"
           register={register}
-          placeholder="password"
-          error={errors.password?.message ? errors.password.message : null}
+          placeholder={t('password')}
+          error={errors.password?.message ? t(errors.password.message) : null}
           required
         />
         <UIFormInput
           type="password"
           name="confirmPassword"
           register={register}
-          placeholder="confirm password"
+          placeholder={t('confirmPassword')}
           error={
             errors.confirmPassword?.message
-              ? errors.confirmPassword.message
+              ? t(errors.confirmPassword.message)
               : null
           }
           required
@@ -86,8 +88,8 @@ export default function SignUpPage() {
         <UIButton type="submit" disabled={!isValid} text="Sign up" />
       </form>
       <p>
-        Already have an account?
-        <Link href={RoutePaths.SIGNIN}> Sign in</Link>
+        {t('haveAccount')}
+        <Link href={RoutePaths.SIGNIN}> {t('login')}</Link>
       </p>
     </>
   );

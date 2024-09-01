@@ -11,6 +11,7 @@ import { RoutePaths } from '@/constants/routePaths';
 import { UIButton } from '@/components/ui/UIButton';
 import { useAuth } from '@/context/AuthContext';
 import { Spinner } from '@/components/spinner/Spinner';
+import { useTranslation } from 'react-i18next';
 
 export type SignInFormType = {
   email: string;
@@ -28,6 +29,7 @@ export default function SignInPage() {
   });
 
   const { isLoading, user } = useAuth();
+  const { t } = useTranslation();
 
   const logInUser: SubmitHandler<SignInFormType> = async ({
     email,
@@ -42,28 +44,29 @@ export default function SignInPage() {
   if (isLoading || user) return <Spinner />;
   return (
     <div>
-      <h2>Sign In</h2>
+      <h2>{t('signIn')}</h2>
       <form onSubmit={handleSubmit(logInUser)}>
         <UIFormInput
           type="text"
           name="email"
           register={register}
-          placeholder="email"
-          error={errors.email?.message ? errors.email.message : null}
+          placeholder={t('eMailAddress')}
+          error={errors.email?.message ? t(errors.email.message) : null}
           required
         />
         <UIFormInput
           type="password"
           name="password"
           register={register}
-          placeholder="password"
-          error={errors.password?.message ? errors.password.message : null}
+          placeholder={t('password')}
+          error={errors.password?.message ? t(errors.password.message) : null}
           required
         />
-        <UIButton type="submit" disabled={!isValid} text="Sign in" />
+        <UIButton type="submit" disabled={!isValid} text={t('signIn')} />
       </form>
       <p>
-        Dont have an account? <Link href={RoutePaths.SIGNUP}>Register</Link>
+        {t('dontHaveAccount')}{' '}
+        <Link href={RoutePaths.SIGNUP}>{t('register')}</Link>
       </p>
     </div>
   );
