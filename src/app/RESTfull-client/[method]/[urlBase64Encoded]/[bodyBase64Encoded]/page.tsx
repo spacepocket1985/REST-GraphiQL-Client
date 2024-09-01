@@ -1,6 +1,7 @@
 'use client';
 import { allExpanded, defaultStyles, JsonView } from 'react-json-view-lite';
 import 'react-json-view-lite/dist/index.css';
+import CodeMirror, { EditorView } from '@uiw/react-codemirror';
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -8,6 +9,8 @@ import styles from './page.module.css';
 import { UIButton } from '@/components/ui/UIButton';
 import { Spinner } from '@/components/spinner/Spinner';
 import { useAuth } from '@/context/AuthContext';
+import refactorToJSON from '@/components/refactorToJSON/refactorToJSON';
+import { onError } from '@/utils/firebase';
 
 export default function RESTfullPage({
   params,
@@ -121,6 +124,15 @@ export default function RESTfullPage({
 
     const href = `/RESTfull-client/${method}/${encodedUrl}${body ? `/${encodedBody}` : ''}?${queryParams}`;
     return href;
+  };
+
+  const handlePrettifyClick = () => {
+    try {
+      const prettyJson = refactorToJSON(requestBody);
+      setRequestBody(JSON.stringify(JSON.parse(prettyJson), null, 2));
+    } catch (error) {
+      if (error instanceof Error) onError(error);
+    }
   };
 
   const addToLocalStorage = (
@@ -261,18 +273,47 @@ export default function RESTfullPage({
         {/* Request Body editor */}
         <section className={styles.requestBodyStyle}>
           <label>Body: </label>
-          <textarea
-            value={requestBody}
-            className={`${styles.RESTTextarea} ${styles.bodytextarea}`}
-            onChange={(e) => handleRequestBodyChange(e.target.value)}
-            onBlur={handleRequestBodyBlur}
-            disabled={
+          <CodeMirror
+            className={`${styles.myCodeMirror} ${
               method === 'GET' ||
               method === 'DELETE' ||
               method === 'HEAD' ||
-              method == 'OPTIONS'
+              method === 'OPTIONS'
+                ? styles.readOnlyEditor
+                : ''
+            }`}
+            style={{
+              textAlign: 'start',
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'normal',
+              wordWrap: 'break-word',
+            }}
+            value={requestBody}
+            extensions={[EditorView.lineWrapping]}
+            readOnly={
+              method === 'GET' ||
+              method === 'DELETE' ||
+              method === 'HEAD' ||
+              method === 'OPTIONS'
             }
+            onChange={(newValue) => handleRequestBodyChange(newValue)}
+            onBlur={handleRequestBodyBlur}
+            basicSetup={{
+              highlightActiveLine: true,
+              autocompletion: true,
+              foldGutter: true,
+              dropCursor: true,
+              allowMultipleSelections: true,
+              indentOnInput: true,
+              bracketMatching: true,
+              closeBrackets: true,
+              lintKeymap: true,
+            }}
+            width="300px"
+            minHeight="15rem"
           />
+          {/* Prettify */}
+          <UIButton onClick={handlePrettifyClick}>Prettify</UIButton>
         </section>
         <section>
           <UIButton onClick={sendRequest} disabled={endpoint === ' '}>
