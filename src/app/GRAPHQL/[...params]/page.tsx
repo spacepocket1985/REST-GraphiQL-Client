@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+
 import GraphiQLEditor from '@/components/graphiQLEditor/GraphiQLEditor';
 import styles from './page.module.css';
 import { useAuth } from '@/context/AuthContext';
@@ -11,6 +12,7 @@ import { add2LocalStorage } from '@/utils/add2LocalStorage';
 
 const GraphQLPage = () => {
   const searchParams = useSearchParams();
+
   const [headers, setHeaders] = useState<{ key: string; value: string }[]>([
     { key: '', value: '' },
   ]);
@@ -27,7 +29,8 @@ const GraphQLPage = () => {
   const { user, isLoading: loading } = useAuth();
   useEffect(() => {
     const params = window.location.pathname.split('/').slice(-2);
-    add2LocalStorage(window.location.pathname);
+    console.log(document.referrer);
+
     const [encodedEndpoint, encodedBody] = params;
 
     try {
@@ -68,6 +71,8 @@ const GraphQLPage = () => {
 
   useEffect(() => {
     if (endpoint) {
+      add2LocalStorage(window.location.pathname);
+
       handleRequest();
     }
   }, [endpoint]);
