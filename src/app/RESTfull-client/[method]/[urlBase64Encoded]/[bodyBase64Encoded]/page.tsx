@@ -144,14 +144,17 @@ export default function RESTfullPage({
     headers: [string, string][]
   ) => {
     const existingEntries = JSON.parse(
-      localStorage.getItem('rest-data') || '[]'
+      localStorage.getItem('RestGraphqlHistoryLogs') || '[]'
     );
 
     const currentData = createHref(method, endpoint, body, headers);
 
     const updatedEntries = [...existingEntries, currentData];
 
-    localStorage.setItem('rest-data', JSON.stringify(updatedEntries));
+    localStorage.setItem(
+      'RestGraphqlHistoryLogs',
+      JSON.stringify(updatedEntries)
+    );
   };
 
   const updateRoute = (

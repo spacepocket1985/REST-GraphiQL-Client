@@ -7,6 +7,7 @@ import styles from './page.module.css';
 import { useAuth } from '@/context/AuthContext';
 import { Spinner } from '@/components/spinner/Spinner';
 import { onError } from '@/utils/firebase';
+import { add2LocalStorage } from '@/utils/add2LocalStorage';
 
 const GraphQLPage = () => {
   const searchParams = useSearchParams();
@@ -26,6 +27,7 @@ const GraphQLPage = () => {
   const { user, isLoading: loading } = useAuth();
   useEffect(() => {
     const params = window.location.pathname.split('/').slice(-2);
+    add2LocalStorage(window.location.pathname);
     const [encodedEndpoint, encodedBody] = params;
 
     try {

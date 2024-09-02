@@ -17,6 +17,7 @@
   "restClient": "REST клиент",
   "graphClient": "GraphiQL клиент",
   "history": "История запросов",
+  "noHistory": "Здесь пусто. Попробуйте эти варианты:",
   "signUp": "Регистрация",
   "signIn": "Войти",
   "signInPlease": "Войдите, пожалуйста.",
