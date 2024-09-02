@@ -37,21 +37,26 @@ const History: React.FC = () => {
   };
 
   const renderData = history ? (
-    history.reverse().map((item: string, index: number) => {
-      const { client, decodeEndpoint } = createLinkText(item);
-      return (
-        <p className={styles.line} key={index}>
-          <span
-            className={client.includes('Graphql') ? styles.graph : styles.rest}
-          >
-            {client}
-          </span>
-          <Link href={item} className={styles.historyLink}>
-            {decodeEndpoint}
-          </Link>
-        </p>
-      );
-    })
+    history
+      .slice()
+      .reverse()
+      .map((item: string, index: number) => {
+        const { client, decodeEndpoint } = createLinkText(item);
+        return (
+          <p className={styles.line} key={index}>
+            <span
+              className={
+                client.includes('Graphql') ? styles.graph : styles.rest
+              }
+            >
+              {client}
+            </span>
+            <Link href={item} className={styles.historyLink}>
+              {decodeEndpoint}
+            </Link>
+          </p>
+        );
+      })
   ) : (
     <>
       <h4>{t('noHistory')}</h4>
