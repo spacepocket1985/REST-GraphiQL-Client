@@ -32,7 +32,7 @@ export default function WelcomePage() {
               <div className={styles.welcomeTools}>
                 <UILink text={t('restClient')} href={RoutePaths.RESTFULL} />
                 <UILink text={t('graphClient')} href={RoutePaths.GRAPHIQL} />
-                <UILink text={t('history')} href="" />
+                <UILink text={t('history')} href={RoutePaths.HISTORY} />
               </div>
             </div>
           </>

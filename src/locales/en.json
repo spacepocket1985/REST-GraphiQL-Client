@@ -17,6 +17,7 @@
   "restClient": "REST Client",
   "graphClient": "GraphiQL Client",
   "history": "History",
+  "noHistory": "It's empty here. Try those options:",
   "signUp": "Sign up",
   "signIn": "Sign in",
   "logOut": "Logout",
