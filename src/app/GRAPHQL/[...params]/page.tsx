@@ -29,7 +29,6 @@ const GraphQLPage = () => {
   const { user, isLoading: loading } = useAuth();
   useEffect(() => {
     const params = window.location.pathname.split('/').slice(-2);
-    console.log(document.referrer);
 
     const [encodedEndpoint, encodedBody] = params;
 
@@ -71,9 +70,13 @@ const GraphQLPage = () => {
 
   useEffect(() => {
     if (endpoint) {
-      add2LocalStorage(window.location.pathname);
-
       handleRequest();
+      if (!searchParams.get('fromHistory')) {
+        add2LocalStorage(window.location.pathname);
+      }
+      if (searchParams.get('fromHistory')) {
+        setHeaders(headers.filter((item) => item.key !== 'fromHistory'));
+      }
     }
   }, [endpoint]);
 
