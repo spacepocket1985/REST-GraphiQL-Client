@@ -60,7 +60,11 @@
     "vitest": "^2.0.5"
   },
   "lint-staged": {
-    "*.{jsx,ts,tsx}": "npx eslint",
-    "*.{jsx,ts,tsx,html,css}": "npx prettier --fix"
+    "*.{ts,tsx}": [
+      "eslint  --max-warnings=0"
+    ],
+    "*.{html,css}": [
+      "npx prettier --write ."
+    ]
   }
 }
