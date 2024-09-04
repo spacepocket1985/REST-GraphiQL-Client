@@ -66,11 +66,6 @@
     "*.{html,css}": [
       "npx prettier --write ."
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "vitest --run"
-    }
   }
+
 }

@@ -1,2 +1,1 @@
-cd REST-GraphiQL-Client
-npm run lint
+npm run test
