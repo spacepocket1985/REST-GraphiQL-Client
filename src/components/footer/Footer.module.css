@@ -4,5 +4,26 @@
   align-items: center;
   justify-content: center;
   margin: 0.5rem 0;
+  gap: 3rem;
+}
+
+.footerImg {
+  filter: grayscale(100%);
+}
+
+.footerLine {
+  display: flex;
   gap: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.footerLink {
+  text-decoration: none;
+  color: black;
+}
+
+.footerText {
+  font-weight: 600;
+  font-size: 1.8rem;
 }
