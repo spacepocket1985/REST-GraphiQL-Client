@@ -1,7 +1,9 @@
 'use client';
 
+import { Spinner } from '@/components/spinner/Spinner';
 import { UILink } from '@/components/ui/UILink';
 import { RoutePaths } from '@/constants/routePaths';
+import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -28,6 +30,8 @@ const History: React.FC = () => {
     }
   }, []);
 
+  const { user, isLoading } = useAuth();
+
   const createLinkText = (url: string) => {
     const [endpoint] = url.split('/').slice(-2);
     const decodeEndpoint = Buffer.from(endpoint, 'base64').toString('utf-8');
@@ -51,7 +55,10 @@ const History: React.FC = () => {
             >
               {client}
             </span>
-            <Link href={item} className={styles.historyLink}>
+            <Link
+              href={{ pathname: item, query: { fromHistory: true } }}
+              className={styles.historyLink}
+            >
               {decodeEndpoint}
             </Link>
           </p>
@@ -66,6 +73,8 @@ const History: React.FC = () => {
       </div>
     </>
   );
+
+  if (isLoading || !user) return <Spinner />;
 
   return (
     <>
