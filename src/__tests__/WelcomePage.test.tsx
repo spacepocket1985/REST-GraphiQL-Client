@@ -1,6 +1,14 @@
-import { render, screen, act } from '@testing-library/react';
+import {
+  render,
+  screen,
+  act,
+  fireEvent,
+  waitFor,
+} from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { AuthProvider } from '@/context/AuthContext';
+import { MemoryRouterProvider } from 'next-router-mock/MemoryRouterProvider';
+import mockRouter from 'next-router-mock';
 import WelcomePage from '@/app/page';
 
 import { useAuth } from '@/context/AuthContext';
@@ -35,7 +43,8 @@ describe('WelcomePage', () => {
     return render(
       <AuthProvider>
         <WelcomePage />
-      </AuthProvider>
+      </AuthProvider>,
+      { wrapper: MemoryRouterProvider }
     );
   };
 
@@ -83,5 +92,22 @@ describe('WelcomePage', () => {
     expect(screen.queryByText(/titleAvailableUtils/i)).not.toBeInTheDocument();
     expect(screen.getByText(/team/i)).toBeInTheDocument();
     expect(screen.getByText(/titleAboutRS/i)).toBeInTheDocument();
+  });
+  it('should show right graphQl path', async () => {
+    (useAuth as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      user: { uid: '123' },
+      name: 'John Doe',
+      isLoading: false,
+    });
+
+    await act(async () => {
+      renderWithAuth();
+    });
+    await waitFor(() => {
+      fireEvent.click(screen.getByText(/graphClient/i));
+      expect(mockRouter).toMatchObject({
+        pathname: '/GRAPHQL',
+      });
+    });
   });
 });
