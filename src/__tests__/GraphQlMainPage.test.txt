@@ -1,0 +1,82 @@
+import {  
+  render,  
+  screen,  
+  act,  
+  waitFor,  
+} from '@testing-library/react';  
+import { afterEach, describe, expect, it, vi } from 'vitest';  
+import { AuthProvider } from '@/context/AuthContext';  
+import GraphiQL from '@/app/page';  
+import mockRouter from 'next-router-mock';  
+import { MemoryRouterProvider } from 'next-router-mock/MemoryRouterProvider';  
+import { useAuth } from '@/context/AuthContext';  
+import GraphQLPage from '@/app/GRAPHQL/[...params]/page';
+
+// Мокаем useAuth  
+vi.mock('@/context/AuthContext', async (importOriginal) => {  
+  const actual = await importOriginal();  
+  return {  
+    ...(typeof actual === 'object' ? actual : {}),  
+    useAuth: vi.fn(),  
+  };  
+});  
+
+// Мокаем содержимое next/navigation  
+vi.mock('next/navigation', () => ({  
+  useRouter: () => ({  
+    push: vi.fn(),  
+    pathname: '/GRAPHQL/test',  
+  }),  
+  usePathname: () => '/GRAPHQL/test',  
+  useSearchParams: vi.fn(() => {
+    const searchParams = new URLSearchParams({});
+    return searchParams;
+  }),
+}));  
+
+
+afterEach(() => {  
+  vi.restoreAllMocks(); // Восстанавливаем все моки после каждого теста  
+});  
+
+describe('GraphQL base page', () => {  
+  const renderWithAuth = () => {  
+    return render(  
+      <AuthProvider>  
+        <GraphQLPage />  
+      </AuthProvider>,  
+      { wrapper: MemoryRouterProvider } // Используем MemoryRouterProvider  
+    );  
+  };  
+
+  it('should show history page when user is logged in', async () => {  
+  
+    (useAuth as unknown as ReturnType<typeof vi.fn>).mockReturnValue({  
+        user: { uid: '123', email: '@asdasd.mail.com' },  
+        name: 'John Doe',  
+        loading: false,  
+        isLoading: false,   
+    });  
+
+   
+    
+    await act(async () => {  
+        renderWithAuth();  
+    });  
+
+    // Логируем значение pathname после рендеринга  
+
+
+    await waitFor(() => {  
+      expect(screen.getByText('dontHaveAccount')).toBeInTheDocument();
+    });  
+
+
+  
+
+    // expect(mockRouter).toMatchObject({  
+    //     pathname: '/GRAPHQL',  
+    // });  
+
+  });  
+});

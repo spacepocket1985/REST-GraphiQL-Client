@@ -1,5 +1,13 @@
-import { render, screen, act } from '@testing-library/react';
+import {
+  render,
+  screen,
+  act,
+  fireEvent,
+  waitFor,
+} from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { MemoryRouterProvider } from 'next-router-mock/MemoryRouterProvider';
+import mockRouter from 'next-router-mock';
 import { AuthProvider } from '@/context/AuthContext';
 
 import { useAuth } from '@/context/AuthContext';
@@ -35,7 +43,8 @@ describe('Header', () => {
     return render(
       <AuthProvider>
         <Header />
-      </AuthProvider>
+      </AuthProvider>,
+      { wrapper: MemoryRouterProvider }
     );
   };
 
@@ -67,5 +76,26 @@ describe('Header', () => {
     expect(screen.getByText(/signIn/i)).toBeInTheDocument();
     expect(screen.getByText(/main/i)).toBeInTheDocument();
     expect(screen.getByText(/rus/i)).toBeInTheDocument();
+  });
+  it('should change url on click', async () => {
+    (useAuth as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      user: null,
+      name: null,
+      isLoading: false,
+    });
+
+    await act(async () => {
+      renderWithAuth();
+    });
+    expect(screen.getByText(/signUp/i)).toBeInTheDocument();
+    expect(screen.getByText(/signIn/i)).toBeInTheDocument();
+    expect(screen.getByText(/main/i)).toBeInTheDocument();
+    expect(screen.getByText(/rus/i)).toBeInTheDocument();
+    await waitFor(() => {
+      fireEvent.click(screen.getByText(/signUp/i));
+      expect(mockRouter).toMatchObject({
+        pathname: '/auth/sign-up',
+      });
+    });
   });
 });
