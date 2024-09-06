@@ -5,12 +5,14 @@ type CodeEditorPropsType = {
   data: string;
   onChange: (data: string) => void;
   useDefaultSettings?: boolean;
+  className?: string;
 };
 
 const CodeEditor: React.FC<CodeEditorPropsType> = ({
   data,
   onChange,
   useDefaultSettings = false,
+  className = '',
 }) => {
   const defaultSettings = {
     highlightActiveLine: true,
@@ -30,7 +32,7 @@ const CodeEditor: React.FC<CodeEditorPropsType> = ({
 
   return (
     <CodeMirror
-      className={styles.myCodeMirror}
+      className={`${styles.myCodeMirror} ${className}`} // Merge default and custom class names
       style={{
         textAlign: 'start',
         whiteSpace: 'pre-wrap',
