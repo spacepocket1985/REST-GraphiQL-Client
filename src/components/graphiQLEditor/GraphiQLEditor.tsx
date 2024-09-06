@@ -3,7 +3,6 @@
 import { JsonView, allExpanded, defaultStyles } from 'react-json-view-lite';
 import 'react-json-view-lite/dist/index.css';
 import gqlPrettier from 'graphql-prettier';
-import CodeMirror, { EditorView } from '@uiw/react-codemirror';
 import React, { useEffect, useState } from 'react';
 
 import { UIButton } from '../ui/UIButton';
@@ -17,6 +16,7 @@ import { Spinner } from '../spinner/Spinner';
 import styles from './GraphiQLEditor.module.css';
 import { RoutePaths } from '@/constants/routePaths';
 import { useTranslation } from 'react-i18next';
+import CodeEditor from './CodeEditor';
 
 export interface Props {
   paramEndpoint?: string;
@@ -207,30 +207,9 @@ const GraphiQLEditor: React.FC<Props> = ({
           <UIButton onClick={handlePrettify}>{t('prettify')}</UIButton>
         </div>
         {isQueryVisible && (
-          <CodeMirror
-            className={styles.myCodeMirror}
-            style={{
-              textAlign: 'start',
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'normal',
-              wordWrap: 'break-word',
-            }}
-            value={query}
-            extensions={[EditorView.lineWrapping]}
+          <CodeEditor
+            data={query}
             onChange={(newValue) => setQuery(newValue)}
-            basicSetup={{
-              highlightActiveLine: true,
-              autocompletion: true,
-              foldGutter: true,
-              dropCursor: true,
-              allowMultipleSelections: true,
-              indentOnInput: true,
-              bracketMatching: true,
-              closeBrackets: true,
-              lintKeymap: true,
-            }}
-            width="auto"
-            minHeight="10rem"
           />
         )}
       </section>
@@ -242,30 +221,9 @@ const GraphiQLEditor: React.FC<Props> = ({
           {t('variables')} {!isHeadersVisible ? `${t('show')}` : `${t('hide')}`}
         </h3>
         {isVariablesVisible && (
-          <CodeMirror
-            className={styles.myCodeMirror}
-            style={{
-              textAlign: 'start',
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'normal',
-              wordWrap: 'break-word',
-            }}
-            value={variables}
-            extensions={[EditorView.lineWrapping]}
+          <CodeEditor
+            data={variables}
             onChange={(newValue) => setVariables(newValue)}
-            basicSetup={{
-              highlightActiveLine: true,
-              autocompletion: true,
-              foldGutter: true,
-              dropCursor: true,
-              allowMultipleSelections: true,
-              indentOnInput: true,
-              bracketMatching: true,
-              closeBrackets: true,
-              lintKeymap: true,
-            }}
-            width="auto"
-            minHeight="10rem"
           />
         )}
       </section>

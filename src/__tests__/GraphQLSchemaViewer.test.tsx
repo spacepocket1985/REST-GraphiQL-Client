@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { GraphQLSchemaViewer } from '@/components/graphiQLEditor/GraphQLSchemaViewer';
 
-const mockData = {
+export const mockData = {
   types: [
     {
       name: 'User',

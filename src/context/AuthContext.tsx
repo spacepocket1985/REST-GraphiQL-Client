@@ -18,7 +18,6 @@ const privateRoutes = [
   RoutePaths.GRAPHIQL,
   RoutePaths.RESTFULL,
   RoutePaths.HISTORY,
-  RoutePaths.GRAPHIQL,
 ];
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
