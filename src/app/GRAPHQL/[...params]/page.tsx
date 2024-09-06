@@ -4,11 +4,11 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import GraphiQLEditor from '@/components/graphiQLEditor/GraphiQLEditor';
-import styles from './page.module.css';
 import { useAuth } from '@/context/AuthContext';
 import { Spinner } from '@/components/spinner/Spinner';
 import { onError } from '@/utils/firebase';
 import { add2LocalStorage } from '@/utils/add2LocalStorage';
+import styles from './page.module.css';
 
 const GraphQLPage = () => {
   const searchParams = useSearchParams();
@@ -59,7 +59,6 @@ const GraphQLPage = () => {
         onError(error);
       }
     }
-
     const headersObj = Object.fromEntries([...searchParams.entries()]);
     const headersArray = Object.entries(headersObj).map(([key, value]) => ({
       key,
