@@ -216,8 +216,9 @@ export default function RESTfullPage({
         <h1 className={styles.wrapperSubTitle}>{t('restClient')}</h1>
 
         <section>
-          <label>{t('method')}</label>
+          <label htmlFor="method">{t('method')}</label>
           <select
+            id="method"
             onChange={(e) => handleMethodChange(e.target.value)}
             value={method}
           >
@@ -231,8 +232,13 @@ export default function RESTfullPage({
           </select>
         </section>
         <section>
-          <label>{t('endpointURL')}</label>
-          <input type="text" onChange={handleEndpointChange} value={endpoint} />
+          <label htmlFor="endpointURL">{t('endpointURL')}</label>
+          <input
+            id="endpointURL"
+            type="text"
+            onChange={handleEndpointChange}
+            value={endpoint}
+          />
         </section>
         {/* Headers editor */}
         <section>
