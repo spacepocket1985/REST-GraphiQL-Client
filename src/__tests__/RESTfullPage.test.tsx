@@ -139,7 +139,9 @@ describe('RESTfullPage', () => {
     });
 
     const sendRequestButton = screen.getByText('sendRequest');
-    fireEvent.click(sendRequestButton);
+    await act(async () => {
+      fireEvent.click(sendRequestButton);
+    });
 
     await vi.waitFor(() => {
       expect(fetch).toHaveBeenCalled();
