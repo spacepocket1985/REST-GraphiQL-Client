@@ -78,6 +78,12 @@ export default function RESTfullPage({
     const url = event.target.value;
 
     setEndpoint(url);
+  };
+
+  const handleEndpointBlur = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const url = event.target.value;
+
+    setEndpoint(url);
     updateRoute(method, url || ' ', requestBody, Array.from(headers));
   };
 
@@ -237,6 +243,7 @@ export default function RESTfullPage({
             id="endpointURL"
             type="text"
             onChange={handleEndpointChange}
+            onBlur={handleEndpointBlur}
             value={endpoint}
           />
         </section>
