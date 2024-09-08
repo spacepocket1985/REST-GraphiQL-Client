@@ -27,6 +27,7 @@ const GraphQLPage = () => {
 
   const [statusCode, setStatusCode] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const { user, isLoading: loading } = useAuth();
   useEffect(() => {
@@ -38,27 +39,21 @@ const GraphQLPage = () => {
       const decodedEndpoint = Buffer.from(encodedEndpoint, 'base64').toString(
         'utf-8'
       );
-      setEndpoint(decodedEndpoint);
-    } catch (error) {
-      if (error instanceof Error) {
-        setEndpoint(Buffer.from('').toString('base64'));
-        if (error instanceof Error) onError(t('errMsgDecodEndpoint'));
-      }
-    }
-
-    try {
       const decodedBody = decodeURIComponent(
         Buffer.from(encodedBody, 'base64').toString('utf-8')
       );
-
+      setEndpoint(decodedEndpoint);
       const bodyJson = JSON.parse(decodedBody);
       setQuery(bodyJson.query || '');
       setVariables(bodyJson.variables || '');
     } catch (error) {
-      setQuery('');
-      setVariables('');
       if (error instanceof Error) {
-        onError(t('errMsgDecodBody'));
+        if (!errorMessage) {
+          setErrorMessage(t('errMsgDecodEndpoint'));
+          onError(t('errMsgDecodEndpoint'));
+        }
+        setQuery('');
+        setVariables('');
       }
     }
     const headersObj = Object.fromEntries([...searchParams.entries()]);
