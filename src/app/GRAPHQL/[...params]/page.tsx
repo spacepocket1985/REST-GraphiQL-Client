@@ -53,7 +53,7 @@ const GraphQLPage = () => {
           onError(t('errMsgDecodEndpoint'));
         }
         setQuery('');
-        setVariables('');
+        setVariables(' ');
       }
     }
     const headersObj = Object.fromEntries([...searchParams.entries()]);
