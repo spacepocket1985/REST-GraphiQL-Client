@@ -81,7 +81,20 @@ describe('GraphiQLEditor', () => {
       fireEvent.click(screen.getByText(/addHeader/i));
     });
 
+    await act(async () => {
+      fireEvent.click(screen.getByText(/addHeader/i));
+    });
+
     expect(screen.getAllByPlaceholderText(/headerKey/i).length).toBe(2);
+
+    const btnDelHeader = screen.getAllByTestId('btnDelHeader');
+
+    expect(btnDelHeader[0]).toBeInTheDocument();
+
+    await act(async () => {
+      fireEvent.click(btnDelHeader[0]);
+    });
+    expect(screen.getAllByPlaceholderText(/headerKey/i).length).toBe(1);
   });
 
   it('displays a spinner when loading', async () => {

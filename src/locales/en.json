@@ -12,7 +12,7 @@
   "developer003": "Kseniya",
   "titleAboutRS": "About RSschool",
   "greetingsUser": "Welcome back",
-  "description": "lightweight application that combines the functionalities of two leading API clients: Postman and GraphiQL. It is designed for developers working with both REST and GraphQL APIs, providing an intuitive interface for creating, testing, and documenting requests.",
+  "description": "Lightweight application that combines the functionalities of two leading API clients: Postman and GraphiQL. It is designed for developers working with both REST and GraphQL APIs, providing an intuitive interface for creating, testing, and documenting requests.",
   "descriptionRS": "The project was completed by students of the React RS School course. RS School is an educational platform offering programming courses, including React. It was founded with the aim of training qualified specialists in the field of IT. The school offers free courses that cover various aspects of web development, including front-end and back-end technologies. The training includes both theoretical classes and practical projects, which allows students to apply their acquired knowledge in practice.",
   "restClient": "REST Client",
   "graphClient": "GraphiQL Client",
@@ -66,5 +66,13 @@
   "status": "Status code:",
   "sDLDocs": "SDL Docs:",
   "method": "Method: ",
-  "body": "Body: "
+  "body": "Body: ",
+  "graphStartPageinfo": "The data is filled in as an example. Make changes or submit a request to encode the address bar.",
+  "errMsgAuthorization": "Authorization error. Login information is incorrect.",
+  "errMsgRegistration": "Registration error. Try again.",
+  "errMsgEncodEndpoint": "Error when trying to encode an address string in base-64",
+  "errMsgDecodEndpoint": "Error when trying to decode an address string in base-64",
+  "errMsgEncodBody": "Error when trying to encode body in base-64",
+  "errMsgDecodBody": "Error when trying to decode body in base-64",
+  "errMsgPrettier": "Error with prettier "
 }

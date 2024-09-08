@@ -82,8 +82,8 @@ const fetchUserName = async (
   }
 };
 
-const onError = (error: Error): void => {
-  toast.error(error.message, {
+const onError = (error: string): void => {
+  toast.error(error, {
     position: 'top-right',
     autoClose: 5000,
     hideProgressBar: false,

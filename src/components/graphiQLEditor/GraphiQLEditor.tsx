@@ -95,22 +95,50 @@ const GraphiQLEditor: React.FC<Props> = ({
     fetchSchema();
   }, [response, sdlUrl]);
 
-  const handleUrl = () => {
+  const handleUrl = (
+    sendRequest: boolean,
+    newHeaders: {
+      key: string;
+      value: string;
+    }[] = headers
+  ) => {
+    const finalHedars = newHeaders ? newHeaders : headers;
     const headersObj = Object.fromEntries(
-      headers
+      finalHedars
         .filter((header) => header.key.trim() !== '')
         .map((header) => [header.key, header.value])
     );
-    const endpointUrlBase64 = btoa(endpoint);
+    let finalUrl = '';
+    try {
+      const endpointUrlBase64 = btoa(endpoint);
+      finalUrl = endpoint ? `${endpointUrlBase64}/` : '';
+    } catch (error) {
+      setEndpoint('');
+      setSdlUrl('');
+      if (error instanceof Error) onError(t('errMsgEncodEndpoint'));
+      return;
+    }
+
     const bodyBase64 = btoa(
       encodeURIComponent(JSON.stringify({ query, variables }))
     );
-    const newUrl = `${RoutePaths.GRAPHIQL}/${endpointUrlBase64}/${bodyBase64}?${new URLSearchParams(headersObj).toString()}`;
-    router.push(newUrl);
+    const finalBody = variables || query ? `/${bodyBase64}` : '';
+
+    const newUrl = `${RoutePaths.GRAPHIQL}/${finalUrl}${finalBody}?${new URLSearchParams(headersObj).toString()}`;
+
+    window.history.replaceState(null, '', newUrl);
+    if (sendRequest) router.push(newUrl);
   };
 
-  const handleDelHeader = (index: number) => {
-    setHeaders(headers.filter((_, itemIndex) => itemIndex !== index));
+  const handleEndpointOnFocus = () => {
+    handleUrl(false);
+    setSdlUrl(endpoint ? `${endpoint}?sdl` : '');
+  };
+
+  const handleDelHeader = async (index: number) => {
+    const newHeaders = headers.filter((_, itemIndex) => itemIndex !== index);
+    setHeaders(newHeaders);
+    handleUrl(false, newHeaders);
   };
 
   const handlePrettify = () => {
@@ -119,7 +147,7 @@ const GraphiQLEditor: React.FC<Props> = ({
 
       setQuery(prettifiedQuery);
     } catch (error) {
-      if (error instanceof Error) onError(error);
+      if (error instanceof Error) onError(t('errMsgPrettier') + error.message);
     }
   };
 
@@ -133,6 +161,7 @@ const GraphiQLEditor: React.FC<Props> = ({
             onChange={(e) => setEndpoint(e.target.value)}
             placeholder={t('endpointURL')}
             className={styles.editorInput}
+            onBlur={handleEndpointOnFocus}
           />
           <p className={styles.url}>{t('url')}</p>
         </div>
@@ -170,19 +199,22 @@ const GraphiQLEditor: React.FC<Props> = ({
                     const newHeaders = [...headers];
                     newHeaders[index].key = e.target.value;
                     setHeaders(newHeaders);
+                    handleUrl(false);
                   }}
                 />
                 <input
                   type="text"
-                  placeholder={t('headerKey')}
+                  placeholder={t('headerValue')}
                   value={header.value}
                   onChange={(e) => {
                     const newHeaders = [...headers];
                     newHeaders[index].value = e.target.value;
                     setHeaders(newHeaders);
+                    handleUrl(false);
                   }}
                 />
                 <UIButton
+                  data-testid="btnDelHeader"
                   className={styles.btnDel}
                   onClick={() => {
                     handleDelHeader(index);
@@ -202,7 +234,7 @@ const GraphiQLEditor: React.FC<Props> = ({
             onClick={() => setIsQueryVisible(!isQueryVisible)}
             className={styles.sectionTitle}
           >
-            {t('query')} {!isHeadersVisible ? `${t('show')}` : `${t('hide')}`}
+            {t('query')} {!isQueryVisible ? `${t('show')}` : `${t('hide')}`}
           </h3>
           <UIButton onClick={handlePrettify}>{t('prettify')}</UIButton>
         </div>
@@ -210,6 +242,9 @@ const GraphiQLEditor: React.FC<Props> = ({
           <CodeEditor
             data={query}
             onChange={(newValue) => setQuery(newValue)}
+            onBlur={() => {
+              handleUrl(false);
+            }}
           />
         )}
       </section>
@@ -218,16 +253,25 @@ const GraphiQLEditor: React.FC<Props> = ({
           onClick={() => setIsVariablesVisible(!isVariablesVisible)}
           className={styles.sectionTitle}
         >
-          {t('variables')} {!isHeadersVisible ? `${t('show')}` : `${t('hide')}`}
+          {t('variables')}{' '}
+          {!isVariablesVisible ? `${t('show')}` : `${t('hide')}`}
         </h3>
         {isVariablesVisible && (
           <CodeEditor
             data={variables}
             onChange={(newValue) => setVariables(newValue)}
+            onBlur={() => {
+              handleUrl(false);
+            }}
           />
         )}
       </section>
-      <UIButton onClick={handleUrl} disabled={endpoint.length === 0}>
+      <UIButton
+        onClick={() => {
+          handleUrl(true);
+        }}
+        disabled={endpoint.length === 0}
+      >
         {t('sendRequest')}
       </UIButton>
       <section>

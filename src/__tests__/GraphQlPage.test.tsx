@@ -105,6 +105,9 @@ describe('GraphQL page with query', () => {
     const inputHeaders = screen.getAllByPlaceholderText(
       /headerKey/i
     ) as HTMLInputElement[];
+    const inputHeadersValues = screen.getAllByPlaceholderText(
+      /headerValue/i
+    ) as HTMLInputElement[];
     const inputEndpoint = screen.getByPlaceholderText(
       /url/i
     ) as HTMLInputElement;
@@ -116,8 +119,8 @@ describe('GraphQL page with query', () => {
     expect(inputEndpoint.value).toBe('https://rickandmortyapi.com/graphql');
     expect(inputSDL.value).toBe('https://rickandmortyapi.com/graphql?sdl');
     expect(inputHeaders[0].value).toBe('param1');
-    expect(inputHeaders[1].value).toBe('header value1');
-    expect(inputHeaders[2].value).toBe('param2');
+    expect(inputHeaders[1].value).toBe('param2');
+    expect(inputHeadersValues[0].value).toBe('header value1');
   });
 
   it('test url', async () => {

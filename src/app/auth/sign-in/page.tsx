@@ -38,7 +38,7 @@ export default function SignInPage() {
     try {
       await logInWithEmailAndPassword(email, password);
     } catch (error) {
-      if (error instanceof Error) onError(error);
+      if (error instanceof Error) onError(t('errMsgAuthorization'));
     }
   };
   if (isLoading || user) return <Spinner />;
