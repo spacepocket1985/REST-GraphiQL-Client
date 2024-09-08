@@ -139,7 +139,7 @@ export default function RESTfullPage({
       const prettyJson = refactorToJSON(requestBody);
       setRequestBody(JSON.stringify(JSON.parse(prettyJson), null, 2));
     } catch (error) {
-      if (error instanceof Error) onError(error);
+      if (error instanceof Error) onError(t('errMsgPrettier') + error.message);
     }
   };
 

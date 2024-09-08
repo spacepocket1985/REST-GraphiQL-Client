@@ -41,7 +41,7 @@ export default function SignUpPage() {
     try {
       await registerWithEmailAndPassword(name, email, password);
     } catch (error) {
-      if (error instanceof Error) onError(error);
+      if (error instanceof Error) onError(t('errMsgRegistration'));
     }
   };
   if (isLoading || user) return <Spinner />;

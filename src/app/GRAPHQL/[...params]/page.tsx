@@ -9,9 +9,11 @@ import { Spinner } from '@/components/spinner/Spinner';
 import { onError } from '@/utils/firebase';
 import { add2LocalStorage } from '@/utils/add2LocalStorage';
 import styles from './page.module.css';
+import { useTranslation } from 'react-i18next';
 
 const GraphQLPage = () => {
   const searchParams = useSearchParams();
+  const { t } = useTranslation();
 
   const [headers, setHeaders] = useState<{ key: string; value: string }[]>([
     { key: '', value: '' },
@@ -40,7 +42,7 @@ const GraphQLPage = () => {
     } catch (error) {
       if (error instanceof Error) {
         setEndpoint(Buffer.from('').toString('base64'));
-        onError(error);
+        if (error instanceof Error) onError(t('errMsgDecodEndpoint'));
       }
     }
 
@@ -56,7 +58,7 @@ const GraphQLPage = () => {
       setQuery('');
       setVariables('');
       if (error instanceof Error) {
-        onError(error);
+        onError(t('errMsgDecodBody'));
       }
     }
     const headersObj = Object.fromEntries([...searchParams.entries()]);

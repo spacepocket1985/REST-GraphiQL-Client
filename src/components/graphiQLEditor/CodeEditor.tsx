@@ -4,6 +4,7 @@ import CodeMirror, { EditorView } from '@uiw/react-codemirror';
 type CodeEditorPropsType = {
   data: string;
   onChange: (data: string) => void;
+  onBlur?: () => void;
   useDefaultSettings?: boolean;
   className?: string;
 };
@@ -11,6 +12,7 @@ type CodeEditorPropsType = {
 const CodeEditor: React.FC<CodeEditorPropsType> = ({
   data,
   onChange,
+  onBlur,
   useDefaultSettings = false,
   className = '',
 }) => {
@@ -32,7 +34,7 @@ const CodeEditor: React.FC<CodeEditorPropsType> = ({
 
   return (
     <CodeMirror
-      className={`${styles.myCodeMirror} ${className}`} // Merge default and custom class names
+      className={`${styles.myCodeMirror} ${className}`}
       style={{
         textAlign: 'start',
         whiteSpace: 'pre-wrap',
@@ -42,6 +44,7 @@ const CodeEditor: React.FC<CodeEditorPropsType> = ({
       value={data}
       extensions={[EditorView.lineWrapping]}
       onChange={onChange}
+      onBlur={onBlur}
       basicSetup={useDefaultSettings ? defaultSettings : customSettings}
       width="auto"
       minHeight="10rem"
