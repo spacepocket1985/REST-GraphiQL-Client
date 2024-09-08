@@ -49,8 +49,8 @@ const GraphQLPage = () => {
     } catch (error) {
       if (error instanceof Error) {
         if (!errorMessage) {
-          setErrorMessage(t('errMsgDecodEndpoint'));
-          onError(t('errMsgDecodEndpoint'));
+          setErrorMessage(t('errMsgEncodBody'));
+          onError(t('errMsgEncodBody'));
         }
         setQuery('');
         setVariables(' ');

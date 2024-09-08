@@ -72,6 +72,6 @@
   "errMsgRegistration": "Registration error. Try again.",
   "errMsgEncodEndpoint": "Error when trying to encode an address string in base-64",
   "errMsgDecodEndpoint": "Error when trying to decode an address string in base-64",
-  "errMsgEncodBody": "Error when trying to encode body(qury or variables) in base-64",
+  "errMsgEncodBody": "Error when trying to encode body(query or variables) in base-64",
   "errMsgPrettier": "Error with prettier "
 }
