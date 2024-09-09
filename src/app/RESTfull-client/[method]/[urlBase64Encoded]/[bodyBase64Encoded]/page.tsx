@@ -345,7 +345,7 @@ export default function RESTfullPage({
           <UIButton onClick={handlePrettifyClick}>{t('prettify')}</UIButton>
         </section>
         <section>
-          <UIButton onClick={sendRequest} disabled={endpoint === ' '}>
+          <UIButton onClick={sendRequest} disabled={endpoint.trim() === ''}>
             {t('sendRequest')}
           </UIButton>
         </section>
