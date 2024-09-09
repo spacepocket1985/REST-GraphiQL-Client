@@ -86,7 +86,9 @@ const GraphiQLEditor: React.FC<Props> = ({
           const schema = await fetchGraphQLSchema(sdlUrl);
           setSdlDocs(schema);
         } catch (error) {
-          console.error('Error:', error);
+          if (error instanceof Error) {
+            onError(t('errorFetchingSchema') + error.message);
+          }
           setSdlDocs(null);
         }
       }

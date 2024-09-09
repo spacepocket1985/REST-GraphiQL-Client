@@ -77,8 +77,8 @@ const fetchUserName = async (
     const data = doc.docs[0].data();
     return data.name;
   } catch (err) {
-    console.error(err);
-    alert('An error occured while fetching user data');
+    if (err instanceof Error)
+      alert('An error occured while fetching user data');
   }
 };
 

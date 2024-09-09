@@ -51,7 +51,8 @@ export default function RESTfullPage({
       body: decodedBody,
     };
   } catch (error) {
-    console.error('Error decoded base64 data:', error);
+    if (error instanceof Error) onError(t('errMsgDecod'));
+
     initParamsDecoded = {
       method: params.method,
       endpoint: ' ',
@@ -219,7 +220,6 @@ export default function RESTfullPage({
       updateRoute(method, endpoint, requestBody, Array.from(headers));
       addToLocalStorage(method, endpoint, requestBody, Array.from(headers));
     } catch (error) {
-      console.error(error);
       const message =
         error instanceof Error ? error.message : 'An unknown error occurred';
       setResponse(message);

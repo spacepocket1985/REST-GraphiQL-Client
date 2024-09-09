@@ -73,6 +73,8 @@
   "errMsgEncodEndpoint": "Error when trying to encode an address string in base-64",
   "errMsgDecodEndpoint": "Error when trying to decode an address string in base-64",
   "errMsgEncodBody": "Error when trying to encode body(query or variables) in base-64",
+  "errMsgDecod": "Error when trying to decode data",
   "errMsgPrettier": "Error with prettier ",
-  "notFound": "page not found"
+  "notFound": "page not found",
+  "errorFetchingSchema": "Error Fetching SDL Schema"
 }
