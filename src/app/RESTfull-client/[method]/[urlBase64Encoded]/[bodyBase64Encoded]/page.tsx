@@ -123,8 +123,19 @@ export default function RESTfullPage({
     body: string,
     headers: [string, string][]
   ) => {
-    const encodedUrl = btoa(endpoint);
-    const encodedBody = btoa(body);
+    let encodedUrl = ' ';
+    try {
+      encodedUrl = btoa(endpoint);
+    } catch (error) {
+      if (error instanceof Error) onError(t('errMsgPrettier') + error.message);
+    }
+
+    let encodedBody = ' ';
+    try {
+      encodedBody = btoa(body);
+    } catch (error) {
+      if (error instanceof Error) onError(t('errMsgPrettier') + error.message);
+    }
 
     const queryParams = new URLSearchParams(
       headers.map(([key, value]) => [key, encodeURIComponent(value)])
