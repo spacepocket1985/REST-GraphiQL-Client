@@ -60,6 +60,7 @@ describe('Header', () => {
     });
     expect(screen.getByText(/logOut/i)).toBeInTheDocument();
     expect(screen.getByText(/main/i)).toBeInTheDocument();
+    expect(screen.getByText(/REST\/Graph/i)).toBeInTheDocument();
     expect(screen.getByText(/rus/i)).toBeInTheDocument();
   });
   it('should show the correct header when the user is not logged in', async () => {
@@ -74,7 +75,7 @@ describe('Header', () => {
     });
     expect(screen.getByText(/signUp/i)).toBeInTheDocument();
     expect(screen.getByText(/signIn/i)).toBeInTheDocument();
-    expect(screen.getByText(/main/i)).toBeInTheDocument();
+    expect(screen.getByText(/REST\/Graph/i)).toBeInTheDocument();
     expect(screen.getByText(/rus/i)).toBeInTheDocument();
   });
   it('should change url on click', async () => {
@@ -89,7 +90,6 @@ describe('Header', () => {
     });
     expect(screen.getByText(/signUp/i)).toBeInTheDocument();
     expect(screen.getByText(/signIn/i)).toBeInTheDocument();
-    expect(screen.getByText(/main/i)).toBeInTheDocument();
     expect(screen.getByText(/rus/i)).toBeInTheDocument();
     await waitFor(() => {
       fireEvent.click(screen.getByText(/signUp/i));
