@@ -36,7 +36,7 @@ export default function Header() {
       className={`${styles['stickyHeader']} ${isScroll ? `${styles['opacity-70']} ${styles['transition-all']}` : ''}`}
     >
       <div className={styles.headerWrapper}>
-        <UIButton text="REST/Graph" />
+        <UILink text={'REST/Graph'} href={RoutePaths.WELCOME} />
         <div className={styles.menuWrapper}>
           <LanguageToggle />
           {user ? (
@@ -46,6 +46,7 @@ export default function Header() {
                 onClick={logout}
                 disabled={!!isLoading}
               />
+              <UILink text={t('main')} href={RoutePaths.WELCOME} />
             </>
           ) : (
             <>
@@ -53,7 +54,6 @@ export default function Header() {
               <UILink text={t('signUp')} href={RoutePaths.SIGNUP} />
             </>
           )}
-          <UILink text={t('main')} href={RoutePaths.WELCOME} />
         </div>
       </div>
     </header>
