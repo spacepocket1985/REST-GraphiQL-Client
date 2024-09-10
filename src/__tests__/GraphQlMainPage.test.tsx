@@ -77,10 +77,6 @@ describe('GraphQL start page', () => {
       renderWithAuth();
     });
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
-    //expect(screen.getByText(/sDLDocs/i)).toBeInTheDocument();
-    //expect(screen.getByPlaceholderText(/endpointURL/i)).toBeInTheDocument();
-    //expect(screen.getByText(/prettify/i)).toBeInTheDocument();
-    //expect(screen.getByText(/sendRequest/i)).toBeEnabled();
   });
 
   it('should render page right', async () => {
