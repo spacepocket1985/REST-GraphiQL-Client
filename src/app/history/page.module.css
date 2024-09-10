@@ -1,0 +1,49 @@
+.historyWrapper {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+
+.historyWrapper span {
+  border-radius: 1rem;
+  padding: 1rem;
+  color: #fff;
+}
+
+.graph {
+  background-color: var(--second-color);
+}
+
+.rest {
+  background-color: var(--fourth-color);
+}
+
+.line {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  transition: all 0.3s;
+}
+
+.line:hover {
+  transform: scale(1.05);
+}
+
+.historyLink {
+  text-decoration: none;
+  background-color: var(--third-color);
+  padding: 1rem;
+  color: #fff;
+  border-radius: 1rem;
+}
+
+.linksWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem 0;
+  gap: 1rem;
+}

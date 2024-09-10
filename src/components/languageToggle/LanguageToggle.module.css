@@ -1,0 +1,8 @@
+.languageToggle {
+  display: flex;
+  gap: 1.6rem;
+}
+
+.languageToggle button {
+  background-color: var(--fourth-color);
+}

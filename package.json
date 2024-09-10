@@ -1,0 +1,71 @@
+{
+  "name": "my-nextjs-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint ./src --fix --color",
+    "lint-staged": "lint-staged",
+    "preview": "vite preview",
+    "format:fix": "prettier --write .",
+    "prepare": "husky install",
+    "test": "vitest --run",
+    "coverage": "vitest --coverage"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^3.9.0",
+    "@uiw/react-codemirror": "^4.23.0",
+    "classnames": "^2.5.1",
+    "codemirror": "^6.0.1",
+    "firebase": "^10.13.0",
+    "i18next": "^23.14.0",
+    "next": "14.2.5",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-firebase-hooks": "^5.1.1",
+    "react-hook-form": "^7.52.2",
+    "react-i18next": "^15.0.1",
+    "react-json-view-lite": "^1.4.0",
+    "react-toastify": "^10.0.5",
+    "yup": "^1.4.0"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.5.0",
+    "@testing-library/react": "^16.0.1",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@typescript-eslint/eslint-plugin": "^8.2.0",
+    "@typescript-eslint/parser": "^8.2.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "@vitest/coverage-v8": "^2.0.5",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-react": "^7.35.0",
+    "eslint-plugin-react-compiler": "^0.0.0-experimental-8e3b87c-20240819",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.10",
+    "format-graphql": "^1.5.0",
+    "graphql-prettier": "^1.0.6",
+    "husky": "^9.1.5",
+    "jsdom": "^25.0.0",
+    "next-router-mock": "^0.9.13",
+    "typescript": "^5",
+    "vite-tsconfig-paths": "^5.0.1",
+    "vitest": "^2.0.5"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint  --max-warnings=0"
+    ],
+    "*.{html,css}": [
+      "npx prettier --write ."
+    ]
+  }
+}
